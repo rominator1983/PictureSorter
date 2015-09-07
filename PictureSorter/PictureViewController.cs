@@ -53,13 +53,8 @@ namespace PictureSorter
 
       var targetPath = Path.Combine (BestOfFolder, Path.GetFileName (PictureCache.CurrentFileName));
 
-      if (File.Exists (targetPath))
-      {
-        MessageBox.Show (string.Format ("File '{0}' already exists.\r\n\r\nNothing has been changed.", targetPath),
-          "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
+      if (FileExists(targetPath))
         return;
-      }
 
       File.Move (PictureCache.CurrentFileName, targetPath);
 
@@ -77,15 +72,22 @@ namespace PictureSorter
 
       var targetPath = Path.Combine (BestOfFolder, Path.GetFileName (PictureCache.CurrentFileName));
 
-      if (File.Exists(targetPath))
-      {
-        MessageBox.Show(string.Format("File '{0}' already exists.\r\n\r\nNothing has been changed.", targetPath),
-          "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
+      if (FileExists(targetPath))
         return;
-      }
 
       File.Copy (PictureCache.CurrentFileName, targetPath);
+    }
+
+    private static bool FileExists (string targetPath)
+    {
+      if (File.Exists (targetPath))
+      {
+        MessageBox.Show (string.Format ("File '{0}' already exists.\r\n\r\nNothing has been changed.", targetPath),
+          "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        return true;
+      }
+      return false;
     }
 
     public void SetBestOfFolder ()
