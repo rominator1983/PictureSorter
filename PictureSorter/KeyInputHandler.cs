@@ -32,7 +32,7 @@ namespace PictureSorter
       if (e.KeyCode == Keys.B)
         PictureViewController.MoveCurrentToBestOf ();
 
-      if (e.KeyCode == Keys.B)
+      if (e.KeyCode == Keys.C)
         PictureViewController.CopyCurrentToBestOf ();
 
       if (e.KeyCode == Keys.R)
