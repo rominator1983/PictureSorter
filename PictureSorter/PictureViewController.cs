@@ -50,8 +50,19 @@ namespace PictureSorter
       if (BestOfFolder == null)
         return;
 
-      File.Move (PictureCache.CurrentFileName, Path.Combine (BestOfFolder, Path.GetFileName (PictureCache.CurrentFileName)));
-      
+
+      var targetPath = Path.Combine (BestOfFolder, Path.GetFileName (PictureCache.CurrentFileName));
+
+      if (File.Exists (targetPath))
+      {
+        MessageBox.Show (string.Format ("File '{0}' already exists.\r\n\r\nNothing has been changed.", targetPath),
+          "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        return;
+      }
+
+      File.Move (PictureCache.CurrentFileName, targetPath);
+
       PictureCache.RefreshAfterFileManipulation ();
       SetCurrentPicture ();
     }
@@ -64,15 +75,24 @@ namespace PictureSorter
       if (BestOfFolder == null)
         return;
 
-      File.Copy (PictureCache.CurrentFileName, Path.Combine (BestOfFolder, Path.GetFileName (PictureCache.CurrentFileName)));
+      var targetPath = Path.Combine (BestOfFolder, Path.GetFileName (PictureCache.CurrentFileName));
+
+      if (File.Exists(targetPath))
+      {
+        MessageBox.Show(string.Format("File '{0}' already exists.\r\n\r\nNothing has been changed.", targetPath),
+          "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        return;
+      }
+
+      File.Copy (PictureCache.CurrentFileName, targetPath);
     }
 
     public void SetBestOfFolder ()
     {
       PictureView.SetNonFullScreen ();
-      var settingsViiew = new SettingsViiew ();
+      var settingsViiew = new SettingsViiew {BestOfFolder = PictureCache.DirectoryName};
 
-      settingsViiew.BestOfFolder = PictureCache.DirectoryName;
       settingsViiew.ShowDialog ();
 
       BestOfFolder = settingsViiew.BestOfFolder;
