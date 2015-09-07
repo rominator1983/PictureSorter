@@ -1,4 +1,3 @@
-using System;
 using System.Windows.Forms;
 
 namespace PictureSorter
@@ -23,7 +22,7 @@ namespace PictureSorter
       if (e.KeyCode == Keys.Right)
         PictureViewController.Next ();
 
-      if (e.KeyCode == Keys.Escape)
+      if (e.KeyCode == Keys.Escape || (e.KeyCode == Keys.F4 && e.Control))
         PictureViewController.Close ();
 
       if (e.KeyCode == Keys.S)
