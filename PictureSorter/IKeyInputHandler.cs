@@ -5,6 +5,6 @@ namespace PictureSorter
 {
   public interface IKeyInputHandler
   {
-    void Handle (KeyEventArgs e);
+    void Handle (IntPtr handle, KeyEventArgs e);
   }
 }

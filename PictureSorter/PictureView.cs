@@ -70,7 +70,7 @@ namespace PictureSorter
 
     private void PictureForm_KeyDown (object sender, KeyEventArgs e)
     {
-      KeyInputHandler.Handle (e);
+      KeyInputHandler.Handle (Handle, e);
     }
 
     private void CurrentPictureOnPaint (object sender, PaintEventArgs paintEventArgs)

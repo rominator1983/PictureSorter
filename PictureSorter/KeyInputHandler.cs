@@ -1,3 +1,4 @@
+using System;
 using System.Windows.Forms;
 
 namespace PictureSorter
@@ -11,8 +12,11 @@ namespace PictureSorter
       PictureViewController = pictureViewController;
     }
 
-    public void Handle (KeyEventArgs e)
+    public void Handle (IntPtr handle, KeyEventArgs e)
     {
+      //if (e.KeyCode == Keys.Delete)
+      //  PictureViewController.MoveToTrashBin (handle);
+
       if (e.Alt && e.KeyCode == Keys.Enter)
         PictureViewController.ToggleFullScreen ();
 

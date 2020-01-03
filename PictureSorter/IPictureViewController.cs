@@ -6,15 +6,15 @@ namespace PictureSorter
   {
     void ToggleFullScreen ();
     void SetPictureForm (IPictureView pictureView);
-    
+
     void Previous ();
     void Next ();
 
     void Close ();
-    void MoveCurrentToBestOf();
+    void MoveCurrentToBestOf ();
     void CopyCurrentToBestOf ();
     void SetBestOfFolder ();
-    
+
     void RotateRight ();
     void RotateLeft ();
 
@@ -28,5 +28,6 @@ namespace PictureSorter
 
     void SortAlphabetically ();
     void SortByDate ();
+    void MoveToTrashBin (IntPtr handle);
   }
 }

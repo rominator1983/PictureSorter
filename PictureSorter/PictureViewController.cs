@@ -2,12 +2,66 @@
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace PictureSorter
 {
   public class PictureViewController : IPictureViewController
   {
+    public struct SHITEMID
+{
+    public long cb;
+    public byte abID;
+}
+
+  public struct ITEMIDLIST
+{
+    public SHITEMID mkid;
+}
+
+
+    //// The Desktop - virtual folder
+    private const long CSIDL_DESKTOP = 0x0;
+    //// Program Files
+    private const long CSIDL_PROGRAMS = 2;
+    //// Control Panel - virtual folder
+    private const long CSIDL_CONTROLS = 3;
+    //// Printers - virtual folder
+    private const long CSIDL_PRINTERS = 4;
+    //// My Documents
+    private const long CSIDL_DOCUMENTS = 5;
+    //// Favourites
+    private const long CSIDL_FAVORITES = 6;
+    //// Startup Folder
+    private const long CSIDL_STARTUP = 7;
+    //// Recent Documents
+    private const long CSIDL_RECENT = 8;
+    //// Send To Folder
+    private const long CSIDL_SENDTO = 9;
+    //// Recycle Bin - virtual folder
+    private const long CSIDL_BITBUCKET = 10;
+    //// Start Menu
+    private const long CSIDL_STARTMENU = 11;
+    //// Desktop folder
+    private const long CSIDL_DESKTOPFOLDER = 16;
+    //// My Computer - virtual folder
+    private const long CSIDL_DRIVES = 17;
+    //// Network Neighbourhood - virtual folder
+    private const long CSIDL_NETWORK = 18;
+    //// NetHood Folder
+    private const long CSIDL_NETHOOD = 19;
+    //// Fonts folder
+    private const long CSIDL_FONTS = 20;
+    //// ShellNew folder
+    private const long CSIDL_SHELLNEW = 21;
+
+    public const int MAX_PATH = 260;
+
+
+    [DllImport ("Shell32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+    public static extern long SHGetSpecialFolderLocation (IntPtr hwndOwner, long nFolder, ITEMIDLIST pidl);
+
     public IPictureView PictureView { get; private set; }
     public IPictureCache PictureCache { get; private set;}
     public string BestOfFolder { get; private set; }
@@ -49,7 +103,6 @@ namespace PictureSorter
 
       if (BestOfFolder == null)
         return;
-
 
       var targetPath = Path.Combine (BestOfFolder, Path.GetFileName (PictureCache.CurrentFileName));
 
@@ -235,6 +288,21 @@ namespace PictureSorter
     public void SortByDate ()
     {
       PictureCache.SortByDate ();
+    }
+
+    public void MoveToTrashBin (IntPtr handle)
+    {
+      ITEMIDLIST IDL = default (ITEMIDLIST);
+      var trashbinPath = SHGetSpecialFolderLocation (handle, CSIDL_PROGRAMS, IDL);
+      var targetPath = Path.Combine (BestOfFolder, Path.GetFileName (PictureCache.CurrentFileName));
+
+      if (FileExists (targetPath))
+        return;
+
+      File.Move (PictureCache.CurrentFileName, targetPath);
+
+      PictureCache.RefreshAfterFileManipulation ();
+      SetCurrentPicture ();
     }
   }
 }

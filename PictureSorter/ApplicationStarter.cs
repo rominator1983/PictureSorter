@@ -21,6 +21,9 @@ namespace PictureSorter
             var pictureFormController = new PictureViewController (fileCache);
             var keyInputHandler = new KeyInputHandler (pictureFormController);
 
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
             Application.Run (new PictureView (pictureFormController, keyInputHandler));
         }
     }
