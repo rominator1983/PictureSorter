@@ -237,7 +237,7 @@ namespace PictureSorter
         using (var fileStream = new FileStream (fileName, FileMode.Open))
           return CorrectRotation (new Bitmap (fileStream));
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         return null;
       }

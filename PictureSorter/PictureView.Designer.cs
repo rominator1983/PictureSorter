@@ -32,7 +32,6 @@ namespace PictureSorter
     private void InitializeComponent ()
     {
       this.CurrentPicture = new Eto.Forms.ImageView();
-      this.SuspendLayout();
       // 
       // CurrentPicture
       // 
@@ -67,8 +66,6 @@ namespace PictureSorter
       //this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.PictureView_HelpButtonClicked);
       this.KeyDown += new System.EventHandler<KeyEventArgs>(this.PictureForm_KeyDown);
       this.MouseDoubleClick += new System.EventHandler<MouseEventArgs>(this.PictureView_MouseDoubleClick);
-      this.ResumeLayout();
-
     }
 
     #endregion

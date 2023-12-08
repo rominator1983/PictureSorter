@@ -10,21 +10,20 @@ namespace PictureSorter
  
         public void Start (string[] args)
         {
+            Application application = new Application();
+
             if (args.Length == 0)
             {
-                //MessageBox.Show ("Picture Viewer must be called with arguments.");
+                MessageBox.Show ("Picture Viewer must be called with arguments.");
                 return;
             }
 
             var fileCache = new PictureCache ();
-            fileCache.Initialize (args [0]);
             var pictureFormController = new PictureViewController (fileCache);
             var keyInputHandler = new KeyInputHandler (pictureFormController);
 
-            //Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            //Application.EnableVisualStyles();
-            //Application.SetCompatibleTextRenderingDefault(false);
-            new Application().Run(new PictureView (pictureFormController, keyInputHandler));
+            fileCache.Initialize (args [0]);
+            application.Run(new PictureView(pictureFormController, keyInputHandler));
         }
     }
 }

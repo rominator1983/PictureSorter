@@ -10,7 +10,7 @@ namespace PictureSorter
   {
     public IKeyInputHandler KeyInputHandler { get; private set; }
     public IPictureViewController PictureViewController { get; private set; }
-    public Bitmap CurrentCitmap { get; private set; }
+    public Bitmap CurrentBitmap { get; private set; }
     public double CurrentZoomFactor { get; private set; }
     public float CurrentPositionX { get; private set; }
     public float CurrentPositionY { get; private set; }
@@ -36,9 +36,10 @@ namespace PictureSorter
     {
       Title = "Picture Sorter - " + picture.FileName;
       //CurrentPicture.Image = picture.Bitmap;
-      CurrentCitmap = picture.Bitmap;
-
+      CurrentBitmap = picture.Bitmap;
       CurrentPicture.Image = picture.Bitmap;
+
+      DrawImage (CurrentZoomFactor, new Graphics(CurrentBitmap));
     }
 
     public void ToggleFullScreen ()
@@ -94,7 +95,7 @@ namespace PictureSorter
     {
       graphics.Clear (Color.FromRgb(0));
 
-      var image = CurrentCitmap;
+      var image = CurrentBitmap;
 
       if (image == null)
         return;
@@ -144,9 +145,9 @@ namespace PictureSorter
 
       graphics.DrawImage (image, (float) x, (float) y, (float) width, (float) height);
 
-      //graphics.DrawString (string.Format ("x: {0} y: {1}", (int)x, (int)y), Font, Brushes.Red, 0, 0);
-      //graphics.DrawString (string.Format ("width: {0} height: {1}", (int)width, (int)height), Font, Brushes.Red, 0, 20);
-      //graphics.DrawString (string.Format ("bound-width: {0} bound-height: {1}", (int)graphics.VisibleClipBounds.Width, (int)graphics.VisibleClipBounds.Height), Font, Brushes.Red, 0, 40);
+      //graphics.DrawText (string.Format ("x: {0} y: {1}", (int)x, (int)y), Font, Brushes.Red, 0, 0);
+      //graphics.DrawText (string.Format ("width: {0} height: {1}", (int)width, (int)height), Font, Brushes.Red, 0, 20);
+      //graphics.DrawText (string.Format ("bound-width: {0} bound-height: {1}", (int)graphics.ClipBounds.Width, (int)graphics.ClipBounds.Height), Font, Brushes.Red, 0, 40);
     }
 
     private void CurrentPicture_MouseDown (object sender, MouseEventArgs e)
