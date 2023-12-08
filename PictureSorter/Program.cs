@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Windows.Forms;
+using Eto.Forms;
 
 namespace PictureSorter
 {
@@ -11,8 +11,8 @@ namespace PictureSorter
     [STAThread]
     static void Main (string[] args)
     {
-      Application.EnableVisualStyles ();
-      Application.SetCompatibleTextRenderingDefault (false);
+      //Application.EnableVisualStyles ();
+      //Application.SetCompatibleTextRenderingDefault (false);
 
       new ApplicationStarter ().Start (args);
     }

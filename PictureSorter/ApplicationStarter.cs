@@ -1,4 +1,4 @@
-﻿using System.Windows.Forms;
+﻿using Eto.Forms;
 
 namespace PictureSorter
 {
@@ -7,12 +7,12 @@ namespace PictureSorter
         public ApplicationStarter ()
         {
         }
-
+ 
         public void Start (string[] args)
         {
             if (args.Length == 0)
             {
-                MessageBox.Show ("Picture Viewer must be called with arguments.");
+                //MessageBox.Show ("Picture Viewer must be called with arguments.");
                 return;
             }
 
@@ -21,10 +21,10 @@ namespace PictureSorter
             var pictureFormController = new PictureViewController (fileCache);
             var keyInputHandler = new KeyInputHandler (pictureFormController);
 
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run (new PictureView (pictureFormController, keyInputHandler));
+            //Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
+            new Application().Run(new PictureView (pictureFormController, keyInputHandler));
         }
     }
 }

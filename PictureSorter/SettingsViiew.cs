@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
+using Eto.Forms;
 
 namespace PictureSorter
 {
@@ -39,14 +39,14 @@ namespace PictureSorter
 
     private void ChooseFolderButton_Click (object sender, EventArgs e)
     {
-      var folderDialog = new FolderBrowserDialog { ShowNewFolderButton = true };
-      folderDialog.SelectedPath = BestOfFolderText.Text;
+      var folderDialog = new SelectFolderDialog() /* { ShowNewFolderButton = true } */;
+      folderDialog.Directory = BestOfFolderText.Text;
 
-      if (folderDialog.ShowDialog () != DialogResult.OK)
+      if (folderDialog.ShowDialog (this) != DialogResult.Ok)
         return;
 
-      if (Directory.Exists (folderDialog.SelectedPath))
-        BestOfFolderText.Text = folderDialog.SelectedPath;
+      if (Directory.Exists (folderDialog.Directory))
+        BestOfFolderText.Text = folderDialog.Directory;
       else
         MessageBox.Show ("Folder must exist.");
     }

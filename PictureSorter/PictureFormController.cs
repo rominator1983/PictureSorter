@@ -61,7 +61,7 @@ namespace PictureSorter
       var settingsViiew = new SettingsViiew ();
 
       settingsViiew.BestOfFolder = PictureCache.DirectoryName;
-      settingsViiew.ShowDialog ();
+      settingsViiew.Show();
 
       BestOfFolder = settingsViiew.BestOfFolder;
     }
@@ -117,7 +117,9 @@ namespace PictureSorter
 
     private string GetJpegLoslessRotateExePath ()
     {
-      return ConfigurationManager.AppSettings["JpegLoslessRotate"];
+      // TODO: make this configurable
+      return "";
+      //return ConfigurationManager.AppSettings["JpegLoslessRotate"];
     }
 
     public void ZoomIn ()

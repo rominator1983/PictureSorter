@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using Eto.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Gtk;
 
 namespace PictureSorter
 {
@@ -38,7 +39,7 @@ namespace PictureSorter
     {
       SetCurrent (fileName);
 
-      DirectoryName = Path.GetDirectoryName (fileName);
+      DirectoryName = Path.GetDirectoryName (Path.GetFullPath(fileName));
       LoadFilesInFolder ();
 
       AssureEnoughFilesAreCached (fileName, 2, 3);
@@ -174,7 +175,7 @@ namespace PictureSorter
       var filesToLoadStackMutex = new object ();
       var filesToLoadStack = new Stack<string> (filesToLoad);
 
-      Action loadPicture = () =>
+      System.Action loadPicture = () =>
       {
         while (filesToLoadStack.Count > 0)
         {
@@ -244,50 +245,51 @@ namespace PictureSorter
 
     private static Bitmap CorrectRotation (Bitmap bitmap)
     {
-      if (Array.IndexOf (bitmap.PropertyIdList, 274) > -1)
-      {
-        var values = bitmap.GetPropertyItem (274).Value;
-        //var dateTakenPropertyItem = bitmap.GetPropertyItem (0x9003);
-        //var dateTakenString = Encoding.UTF8.GetString (dateTakenPropertyItem.Value);
-        //var regex = new Regex (":");
-        //dateTakenString = dateTakenString.Substring (0, dateTakenString.Length - 1);
-        //dateTakenString = regex.Replace (dateTakenString, "-", 2);
-        //var dateTaken = DateTime.Parse (dateTakenString);
-
-        if (values.Length < 1)
-          return bitmap;
-
-        var orientation = (int) values [0];
-        switch (orientation)
-        {
-          case 1:
-            // No rotation required.
-            break;
-          case 2:
-            bitmap.RotateFlip (RotateFlipType.RotateNoneFlipX);
-            break;
-          case 3:
-            bitmap.RotateFlip (RotateFlipType.Rotate180FlipNone);
-            break;
-          case 4:
-            bitmap.RotateFlip (RotateFlipType.Rotate180FlipX);
-            break;
-          case 5:
-            bitmap.RotateFlip (RotateFlipType.Rotate90FlipX);
-            break;
-          case 6:
-            bitmap.RotateFlip (RotateFlipType.Rotate90FlipNone);
-            break;
-          case 7:
-            bitmap.RotateFlip (RotateFlipType.Rotate270FlipX);
-            break;
-          case 8:
-            bitmap.RotateFlip (RotateFlipType.Rotate270FlipNone);
-            break;
-        }
-        // This EXIF data is now invalid and should be removed.
-        bitmap.RemovePropertyItem (274);
-      }
+      // TODO: re-implement rotation correction
+     // if (Array.IndexOf (bitmap.PropertyIdList, 274) > -1)
+     // {
+     //   var values = bitmap.GetPropertyItem (274).Value;
+     //   //var dateTakenPropertyItem = bitmap.GetPropertyItem (0x9003);
+     //   //var dateTakenString = Encoding.UTF8.GetString (dateTakenPropertyItem.Value);
+     //   //var regex = new Regex (":");
+     //   //dateTakenString = dateTakenString.Substring (0, dateTakenString.Length - 1);
+     //   //dateTakenString = regex.Replace (dateTakenString, "-", 2);
+     //   //var dateTaken = DateTime.Parse (dateTakenString);
+//
+     //   if (values.Length < 1)
+     //     return bitmap;
+//
+     //   var orientation = (int) values [0];
+     //   switch (orientation)
+     //   {
+     //     case 1:
+     //       // No rotation required.
+     //       break;
+     //     case 2:
+     //       bitmap.RotateFlip (RotateFlipType.RotateNoneFlipX);
+     //       break;
+     //     case 3:
+     //       bitmap.RotateFlip (RotateFlipType.Rotate180FlipNone);
+     //       break;
+     //     case 4:
+     //       bitmap.RotateFlip (RotateFlipType.Rotate180FlipX);
+     //       break;
+     //     case 5:
+     //       bitmap.RotateFlip (RotateFlipType.Rotate90FlipX);
+     //       break;
+     //     case 6:
+     //       bitmap.RotateFlip (RotateFlipType.Rotate90FlipNone);
+     //       break;
+     //     case 7:
+     //       bitmap.RotateFlip (RotateFlipType.Rotate270FlipX);
+     //       break;
+     //     case 8:
+     //       bitmap.RotateFlip (RotateFlipType.Rotate270FlipNone);
+     //       break;
+     //   }
+     //   // This EXIF data is now invalid and should be removed.
+     //   bitmap.RemovePropertyItem (274);
+     // }
       return bitmap;
     }
 
@@ -331,10 +333,11 @@ namespace PictureSorter
       var regex = new Regex(":");
 
       using (var fileStream = new FileStream (path, FileMode.Open, FileAccess.Read))
-      using (var image = Image.FromStream (fileStream, false, false))
+      
+      using (var image = new Eto.Drawing.Bitmap(fileStream))
       {
-        var propertyItem = image.GetPropertyItem (36867);
-        var dateTaken = regex.Replace (Encoding.UTF8.GetString (propertyItem.Value), "-", 2);
+        var propertyItem = image.Properties.Get<string>(36867);
+        var dateTaken = regex.Replace (propertyItem, "-", 2);
         return DateTime.Parse (dateTaken);
       }
     }

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Windows.Forms;
+using Eto.Forms;
 
 namespace PictureSorter
 {
@@ -10,7 +10,7 @@ namespace PictureSorter
       InitializeComponent ();
     }
 
-    private void HelpView_PreviewKeyDown (object sender, PreviewKeyDownEventArgs e)
+    private void HelpView_PreviewKeyDown (object sender, KeyEventArgs e)
     {
       Close ();
     }

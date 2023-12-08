@@ -1,4 +1,5 @@
 ﻿using System;
+using Eto.Forms;
 
 namespace PictureSorter
 {
@@ -30,50 +31,48 @@ namespace PictureSorter
     /// </summary>
     private void InitializeComponent ()
     {
-      this.CurrentPicture = new System.Windows.Forms.PictureBox();
-      ((System.ComponentModel.ISupportInitialize)(this.CurrentPicture)).BeginInit();
+      this.CurrentPicture = new Eto.Forms.ImageView();
       this.SuspendLayout();
       // 
       // CurrentPicture
       // 
-      this.CurrentPicture.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.CurrentPicture.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.CurrentPicture.Location = new System.Drawing.Point(0, 0);
-      this.CurrentPicture.Name = "CurrentPicture";
-      this.CurrentPicture.Size = new System.Drawing.Size(396, 255);
-      this.CurrentPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+      this.CurrentPicture.Cursor = Eto.Forms.Cursors.Crosshair;
+      //this.CurrentPicture.Dock = Eto.Forms.DockStyle.Fill;
+      //this.CurrentPicture.Location = new Eto.Drawing.Point(0, 0);
+      //this.CurrentPicture.Name = "CurrentPicture";
+      this.CurrentPicture.Size = new Eto.Drawing.Size(396, 255);
+      //this.CurrentPicture.SizeMode = Eto.Forms.PictureBoxSizeMode.Zoom;
       this.CurrentPicture.TabIndex = 1;
-      this.CurrentPicture.TabStop = false;
-      this.CurrentPicture.DoubleClick += new System.EventHandler(this.CurrentPicture_DoubleClick);
-      this.CurrentPicture.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CurrentPicture_MouseDown);
-      this.CurrentPicture.MouseMove += new System.Windows.Forms.MouseEventHandler(this.CurrentPicture_MouseMove);
+      //this.CurrentPicture.TabStop = false;
+      this.CurrentPicture.MouseDoubleClick += new System.EventHandler<MouseEventArgs>(this.CurrentPicture_DoubleClick);
+      this.CurrentPicture.MouseDown += new System.EventHandler<MouseEventArgs>(this.CurrentPicture_MouseDown);
+      this.CurrentPicture.MouseMove += new System.EventHandler<MouseEventArgs>(this.CurrentPicture_MouseMove);
       // 
       // PictureView
       // 
       this.AllowDrop = true;
-      this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
-      this.BackColor = System.Drawing.Color.Black;
-      this.ClientSize = new System.Drawing.Size(396, 255);
-      this.Controls.Add(this.CurrentPicture);
-      this.HelpButton = true;
-      this.KeyPreview = true;
-      this.Name = "PictureView";
-      this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-      this.Text = "Picture Sorter";
-      this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-      this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.PictureView_HelpButtonClicked);
-      this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PictureForm_KeyDown);
-      this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.PictureView_MouseDoubleClick);
-      ((System.ComponentModel.ISupportInitialize)(this.CurrentPicture)).EndInit();
-      this.ResumeLayout(false);
+      //this.AutoScaleDimensions = new Eto.Drawing.SizeF(8F, 16F);
+      //this.AutoScaleMode = Eto.Forms.AutoScaleMode.Font;
+      //this.AutoValidate = Eto.Forms.AutoValidate.Disable;
+      this.BackgroundColor = Eto.Drawing.Color.FromRgb(0);
+      this.ClientSize = new Eto.Drawing.Size(396, 255);
+      this.Content = this.CurrentPicture;
+      //this.HelpButton = true;
+      //this.KeyPreview = true;
+      //this.Name = "PictureView";
+      //this.SizeGripStyle = Eto.Forms.SizeGripStyle.Show;
+      //this.StartPosition = Eto.Forms.FormStartPosition.CenterScreen;
+      this.Title = "Picture Sorter";
+      this.WindowState = Eto.Forms.WindowState.Maximized;
+      //this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.PictureView_HelpButtonClicked);
+      this.KeyDown += new System.EventHandler<KeyEventArgs>(this.PictureForm_KeyDown);
+      this.MouseDoubleClick += new System.EventHandler<MouseEventArgs>(this.PictureView_MouseDoubleClick);
+      this.ResumeLayout();
 
     }
 
     #endregion
 
-    private System.Windows.Forms.PictureBox CurrentPicture;
+    private Eto.Forms.ImageView CurrentPicture;
   }
 }

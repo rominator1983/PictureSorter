@@ -1,5 +1,5 @@
 using System;
-using System.Windows.Forms;
+using Eto.Forms;
 
 namespace PictureSorter
 {
@@ -12,60 +12,60 @@ namespace PictureSorter
       PictureViewController = pictureViewController;
     }
 
-    public void Handle (IntPtr handle, KeyEventArgs e)
+    public void Handle (KeyEventArgs e)
     {
-      //if (e.KeyCode == Keys.Delete)
+      //if (e.KeyData == Keys.Delete)
       //  PictureViewController.MoveToTrashBin (handle);
 
-      if (e.Alt && e.KeyCode == Keys.Enter)
+      if (e.Alt && e.KeyData == Keys.Enter)
         PictureViewController.ToggleFullScreen ();
 
-      if (e.KeyCode == Keys.Left)
+      if (e.KeyData == Keys.Left)
         PictureViewController.Previous ();
 
-      if (e.KeyCode == Keys.Right)
+      if (e.KeyData == Keys.Right)
         PictureViewController.Next ();
 
-      if (e.KeyCode == Keys.Escape || (e.KeyCode == Keys.F4 && e.Control))
+      if (e.KeyData == Keys.Escape || (e.KeyData == Keys.F4 && e.Control))
         PictureViewController.Close ();
 
-      if (e.KeyCode == Keys.S)
+      if (e.KeyData == Keys.S)
         PictureViewController.SetBestOfFolder ();
 
-      if (e.KeyCode == Keys.B)
+      if (e.KeyData == Keys.B)
         PictureViewController.MoveCurrentToBestOf ();
 
-      if (e.KeyCode == Keys.C)
+      if (e.KeyData == Keys.C)
         PictureViewController.CopyCurrentToBestOf ();
 
-      if (e.KeyCode == Keys.R)
+      if (e.KeyData == Keys.R)
         PictureViewController.RotateRight ();
 
-      if (e.KeyCode == Keys.L)
+      if (e.KeyData == Keys.L)
         PictureViewController.RotateLeft ();
 
-      if (e.KeyValue == 187 || e.KeyValue == 107)
+      if (e.KeyData == Keys.Plus)
         PictureViewController.ZoomIn ();
 
-      if (e.KeyValue == 189 || e.KeyValue == 109)
+      if (e.KeyData == Keys.Minus)
         PictureViewController.ZoomOut ();
 
-      if (e.KeyCode == Keys.D0 || e.KeyCode == Keys.NumPad0)
+      if (e.KeyData == Keys.D0)
         PictureViewController.ZoomDeefault ();
 
-      if (e.KeyCode == Keys.F1)
+      if (e.KeyData == Keys.F1)
         PictureViewController.ShowHelpScreen ();
 
-      if (e.KeyCode == Keys.F5)
+      if (e.KeyData == Keys.F5)
         PictureViewController.Refresh ();
 
-      if (e.KeyCode == Keys.E)
+      if (e.KeyData == Keys.E)
         PictureViewController.Edit ();
 
-      if (e.KeyCode == Keys.A)
+      if (e.KeyData == Keys.A)
         PictureViewController.SortAlphabetically ();
 
-      if (e.KeyCode == Keys.D)
+      if (e.KeyData == Keys.D)
         PictureViewController.SortByDate ();
     }
   }

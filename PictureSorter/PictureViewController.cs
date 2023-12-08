@@ -3,7 +3,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
+using Eto.Forms;
 
 namespace PictureSorter
 {
@@ -136,7 +136,7 @@ namespace PictureSorter
       if (File.Exists (targetPath))
       {
         MessageBox.Show (string.Format ("File '{0}' already exists.\r\n\r\nNothing has been changed.", targetPath),
-          "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          "Error", MessageBoxButtons.OK, MessageBoxType.Warning);
 
         return true;
       }
@@ -148,7 +148,7 @@ namespace PictureSorter
       PictureView.SetNonFullScreen ();
       var settingsViiew = new SettingsViiew {BestOfFolder = PictureCache.DirectoryName};
 
-      settingsViiew.ShowDialog ();
+      settingsViiew.Show ();
 
       BestOfFolder = settingsViiew.BestOfFolder;
     }
@@ -220,7 +220,9 @@ namespace PictureSorter
 
     private string GetJpegLoslessRotateExePath ()
     {
-      return ConfigurationManager.AppSettings["JpegLoslessRotate"];
+      // TODO: get path somehow
+      return "";
+      //return ConfigurationManager.AppSettings["JpegLoslessRotate"];
     }
 
     public void ZoomIn ()
@@ -250,7 +252,7 @@ namespace PictureSorter
 
     public void ShowHelpScreen ()
     {
-      new HelpView ().ShowDialog ();
+      new HelpView ().Show ();
     }
 
     public void Refresh ()
@@ -261,7 +263,10 @@ namespace PictureSorter
 
     public void Edit ()
     {
-      var editProgramm = ConfigurationManager.AppSettings["EditProgram"];
+      // TODO: get path somehow
+
+      //var editProgramm = ConfigurationManager.AppSettings["EditProgram"];
+      var editProgramm = "";
 
       var process = new Process ();
       process.StartInfo.UseShellExecute = false;

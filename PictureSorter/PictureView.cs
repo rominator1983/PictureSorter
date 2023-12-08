@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Drawing;
+using Eto.Drawing;
 using System.IO;
-using System.Windows.Forms;
+using Eto.Forms;
 
 namespace PictureSorter
 {
@@ -29,21 +29,21 @@ namespace PictureSorter
       PictureViewController.SetPictureForm (this);
 
       MouseWheel += OnMouseWheel;
-      CurrentPicture.Paint += CurrentPictureOnPaint;
+      //CurrentPicture.Paint += CurrentPictureOnPaint;
     }
 
     public void SetCurrentPicture (Picture picture)
     {
-      Text = "Picture Sorter - " + picture.FileName;
+      Title = "Picture Sorter - " + picture.FileName;
       //CurrentPicture.Image = picture.Bitmap;
       CurrentCitmap = picture.Bitmap;
 
-      CurrentPicture.Refresh ();
+      CurrentPicture.Image = picture.Bitmap;
     }
 
     public void ToggleFullScreen ()
     {
-      if (FormBorderStyle == FormBorderStyle.None)
+      if (WindowState == WindowState.Maximized)
         SetNonFullScreen ();
       else
         SetFullScreen ();
@@ -51,26 +51,22 @@ namespace PictureSorter
 
     private void SetFullScreen ()
     {
-      WindowState = FormWindowState.Normal;
-      TopMost = true;
-      FormBorderStyle = FormBorderStyle.None;
-      WindowState = FormWindowState.Maximized;
+      WindowState = WindowState.Maximized;
     }
 
     public void SetNonFullScreen ()
     {
-      FormBorderStyle = FormBorderStyle.Sizable;
-      TopMost = false;
+      WindowState = WindowState.Normal;
     }
 
-    protected override bool IsInputKey (Keys keyData)
-    {
-      return true;
-    }
+    // protected override bool IsInputKey (Keys keyData)
+    // {
+    //   return true;
+    // }
 
     private void PictureForm_KeyDown (object sender, KeyEventArgs e)
     {
-      KeyInputHandler.Handle (Handle, e);
+      KeyInputHandler.Handle(e);
     }
 
     private void CurrentPictureOnPaint (object sender, PaintEventArgs paintEventArgs)
@@ -83,7 +79,7 @@ namespace PictureSorter
       CurrentZoomFactor = 1.0;
       CurrentPositionX = 0;
       CurrentPositionY = 0;
-      CurrentPicture.Refresh ();
+     // CurrentPicture.Refresh ();
     }
 
     public void SetZoom (double zoomFactor)
@@ -91,19 +87,19 @@ namespace PictureSorter
       CurrentPositionX = (int)(CurrentPositionX * zoomFactor / CurrentZoomFactor);
       CurrentPositionY = (int)(CurrentPositionY * zoomFactor / CurrentZoomFactor);
       CurrentZoomFactor = zoomFactor;
-      CurrentPicture.Refresh ();
+      // CurrentPicture.Refresh ();
     }
 
     private void DrawImage (double zoomFactor, Graphics graphics)
     {
-      graphics.Clear (Color.Black);
+      graphics.Clear (Color.FromRgb(0));
 
       var image = CurrentCitmap;
 
       if (image == null)
         return;
 
-      var grfxFactor = graphics.VisibleClipBounds.Width / (double) graphics.VisibleClipBounds.Height;
+      var grfxFactor = graphics.ClipBounds.Width / (double) graphics.ClipBounds.Height;
       var imageFactor = image.Width / (double) image.Height;
 
       double width;
@@ -114,36 +110,36 @@ namespace PictureSorter
       if (grfxFactor > imageFactor)
       {
         // use height for scaling
-        var scale = image.Height / graphics.VisibleClipBounds.Height;
+        var scale = image.Height / graphics.ClipBounds.Height;
 
         width = image.Width / scale * zoomFactor;
-        height = graphics.VisibleClipBounds.Height * zoomFactor;
+        height = graphics.ClipBounds.Height * zoomFactor;
 
-        x = CurrentPositionX + graphics.VisibleClipBounds.Width / 2d - (width / 2d);
-        y = CurrentPositionY + graphics.VisibleClipBounds.Height / 2d - (height / 2d);
+        x = CurrentPositionX + graphics.ClipBounds.Width / 2d - (width / 2d);
+        y = CurrentPositionY + graphics.ClipBounds.Height / 2d - (height / 2d);
       }
       else
       {
         // use width for scaling
-        var scale = image.Width / graphics.VisibleClipBounds.Width;
+        var scale = image.Width / graphics.ClipBounds.Width;
 
-        width = graphics.VisibleClipBounds.Width * zoomFactor;
+        width = graphics.ClipBounds.Width * zoomFactor;
         height = image.Height / scale * zoomFactor;
 
-        x = CurrentPositionX + graphics.VisibleClipBounds.Width / 2d - (width / 2d);
-        y = CurrentPositionY + graphics.VisibleClipBounds.Height / 2d - (height / 2d);
+        x = CurrentPositionX + graphics.ClipBounds.Width / 2d - (width / 2d);
+        y = CurrentPositionY + graphics.ClipBounds.Height / 2d - (height / 2d);
       }
 
-      while (y > 0 && (height + y) >= graphics.VisibleClipBounds.Height)
+      while (y > 0 && (height + y) >= graphics.ClipBounds.Height)
         y--;
 
-      while (y < 0 && y + height <= graphics.VisibleClipBounds.Height)
+      while (y < 0 && y + height <= graphics.ClipBounds.Height)
         y++;
 
-      while (x > 0 && (width + x) >= graphics.VisibleClipBounds.Width)
+      while (x > 0 && (width + x) >= graphics.ClipBounds.Width)
         x--;
 
-      while (x < 0 && x + width <= graphics.VisibleClipBounds.Width)
+      while (x < 0 && x + width <= graphics.ClipBounds.Width)
         x++;
 
       graphics.DrawImage (image, (float) x, (float) y, (float) width, (float) height);
@@ -155,21 +151,21 @@ namespace PictureSorter
 
     private void CurrentPicture_MouseDown (object sender, MouseEventArgs e)
     {
-      if (e.Button == MouseButtons.Left)
+      if (e.Buttons == MouseButtons.Primary)
       {
-        MouseDownPositionX = e.X - (int)CurrentPositionX;
-        MouseDownPositionY = e.Y - (int)CurrentPositionY;
+        MouseDownPositionX = (int)e.Location.X - (int)CurrentPositionX;
+        MouseDownPositionY = (int)e.Location.Y - (int)CurrentPositionY;
       }
     }
 
     private void CurrentPicture_MouseMove (object sender, MouseEventArgs e)
     {
-      if (e.Button == MouseButtons.Left)
+      if (e.Buttons == MouseButtons.Primary)
       {
-        CurrentPositionX = e.X - MouseDownPositionX;
-        CurrentPositionY = e.Y - MouseDownPositionY;
+        CurrentPositionX = (int)e.Location.X - MouseDownPositionX;
+        CurrentPositionY = (int)e.Location.Y - MouseDownPositionY;
 
-        CurrentPicture.Refresh ();
+        //CurrentPicture.Refresh ();
       }
     }
 
@@ -180,31 +176,34 @@ namespace PictureSorter
 
     protected override void OnDragDrop (DragEventArgs drgevent)
     {
-      var data = (string[])drgevent.Data.GetData (DataFormats.FileDrop);
-
-      if (data.Length > 0)
-      {
-        var droppedFile = data[0];
-
-        if (File.Exists (droppedFile))
-          PictureViewController.SetDroppedFile (droppedFile);
-      }
+      // TODO: fix dragging
+      //var data = (string[])drgevent.Data.GetData (DataFormats.FileDrop);
+//
+      //if (data.Length > 0)
+      //{
+      //  var droppedFile = data[0];
+//
+      //  if (File.Exists (droppedFile))
+      //    PictureViewController.SetDroppedFile (droppedFile);
+      //}
 
       base.OnDragDrop (drgevent);
     }
 
     protected override void OnDragEnter (DragEventArgs drgevent)
     {
-      if (drgevent.Data.GetDataPresent (DataFormats.FileDrop))
-        drgevent.Effect = DragDropEffects.Move;
-
+      // TODO: fix dragging
+      //if (drgevent.Data.GetDataPresent (DataFormats.FileDrop))
+      //  drgevent.Effect = DragDropEffects.Move;
+//
       base.OnDragEnter (drgevent);
     }
 
     protected override void OnDragOver (DragEventArgs drgevent)
     {
-      if (drgevent.Data.GetDataPresent (DataFormats.FileDrop))
-        drgevent.Effect = DragDropEffects.Move;
+      // TODO: fix dragging
+      //if (drgevent.Data.GetDataPresent (DataFormats.FileDrop))
+      //  drgevent.Effect = DragDropEffects.Move;
       
       base.OnDragOver (drgevent);
     }
@@ -221,7 +220,7 @@ namespace PictureSorter
 
     private void OnMouseWheel (object sender, MouseEventArgs mouseEventArgs)
     {
-      if (mouseEventArgs.Delta > 0)
+      if (mouseEventArgs.Delta.Height > 0)
         PictureViewController.ZoomIn();
       else
         PictureViewController.ZoomOut();
