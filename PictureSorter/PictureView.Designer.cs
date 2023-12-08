@@ -31,7 +31,7 @@ namespace PictureSorter
     /// </summary>
     private void InitializeComponent ()
     {
-      this.CurrentPicture = new Eto.Forms.ImageView();
+      this.CurrentPicture = new Eto.Forms.Drawable();
       // 
       // CurrentPicture
       // 
@@ -46,6 +46,9 @@ namespace PictureSorter
       this.CurrentPicture.MouseDoubleClick += new System.EventHandler<MouseEventArgs>(this.CurrentPicture_DoubleClick);
       this.CurrentPicture.MouseDown += new System.EventHandler<MouseEventArgs>(this.CurrentPicture_MouseDown);
       this.CurrentPicture.MouseMove += new System.EventHandler<MouseEventArgs>(this.CurrentPicture_MouseMove);
+
+      this.CurrentPicture.Paint += CurrentPictureOnPaint;
+
       // 
       // PictureView
       // 
@@ -70,6 +73,6 @@ namespace PictureSorter
 
     #endregion
 
-    private Eto.Forms.ImageView CurrentPicture;
+    private Eto.Forms.Drawable CurrentPicture;
   }
 }

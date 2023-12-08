@@ -245,7 +245,7 @@ namespace PictureSorter
 
     private static Bitmap CorrectRotation (Bitmap bitmap)
     {
-      // TODO: re-implement rotation correction
+      // IMPROVE: re-implement rotation correction. This might not be needed for newer files.
      // if (Array.IndexOf (bitmap.PropertyIdList, 274) > -1)
      // {
      //   var values = bitmap.GetPropertyItem (274).Value;

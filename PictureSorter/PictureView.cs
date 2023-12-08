@@ -18,90 +18,90 @@ namespace PictureSorter
     public int MouseDownPositionX { get; private set; }
     public int MouseDownPositionY { get; private set; }
 
-    public PictureView (PictureViewController pictureViewController, KeyInputHandler keyInputHandler)
+    public PictureView(PictureViewController pictureViewController, KeyInputHandler keyInputHandler)
     {
-      InitializeComponent ();
+      InitializeComponent();
 
       CurrentZoomFactor = 1.0;
       PictureViewController = pictureViewController;
       KeyInputHandler = keyInputHandler;
 
-      PictureViewController.SetPictureForm (this);
+      PictureViewController.SetPictureForm(this);
 
       MouseWheel += OnMouseWheel;
       //CurrentPicture.Paint += CurrentPictureOnPaint;
     }
 
-    public void SetCurrentPicture (Picture picture)
+    public void SetCurrentPicture(Picture picture)
     {
       Title = "Picture Sorter - " + picture.FileName;
       //CurrentPicture.Image = picture.Bitmap;
       CurrentBitmap = picture.Bitmap;
-      CurrentPicture.Image = picture.Bitmap;
-
-      DrawImage (CurrentZoomFactor, new Graphics(CurrentBitmap));
+      //CurrentPicture.Image = picture.Bitmap;
     }
 
-    public void ToggleFullScreen ()
+    private void Update()
+    {
+      Console.WriteLine("Update");
+      DrawImage(CurrentZoomFactor, CurrentPicture.CreateGraphics());
+    }
+
+    public void ToggleFullScreen()
     {
       if (WindowState == WindowState.Maximized)
-        SetNonFullScreen ();
+        SetNonFullScreen();
       else
-        SetFullScreen ();
+        SetFullScreen();
     }
 
-    private void SetFullScreen ()
+    private void SetFullScreen()
     {
       WindowState = WindowState.Maximized;
     }
 
-    public void SetNonFullScreen ()
+    public void SetNonFullScreen()
     {
       WindowState = WindowState.Normal;
     }
 
-    // protected override bool IsInputKey (Keys keyData)
-    // {
-    //   return true;
-    // }
-
-    private void PictureForm_KeyDown (object sender, KeyEventArgs e)
+    private void PictureForm_KeyDown(object sender, KeyEventArgs e)
     {
       KeyInputHandler.Handle(e);
     }
 
-    private void CurrentPictureOnPaint (object sender, PaintEventArgs paintEventArgs)
+    private void CurrentPictureOnPaint(object sender, PaintEventArgs paintEventArgs)
     {
-      DrawImage (CurrentZoomFactor, paintEventArgs.Graphics);
+      DrawImage(CurrentZoomFactor, paintEventArgs.Graphics);
+      Update();
     }
 
-    public void ResetZoomAndPosition ()
+    public void ResetZoomAndPosition()
     {
       CurrentZoomFactor = 1.0;
       CurrentPositionX = 0;
       CurrentPositionY = 0;
-     // CurrentPicture.Refresh ();
+      Update();
     }
 
-    public void SetZoom (double zoomFactor)
+    public void SetZoom(double zoomFactor)
     {
       CurrentPositionX = (int)(CurrentPositionX * zoomFactor / CurrentZoomFactor);
       CurrentPositionY = (int)(CurrentPositionY * zoomFactor / CurrentZoomFactor);
       CurrentZoomFactor = zoomFactor;
-      // CurrentPicture.Refresh ();
+      Update();
     }
 
-    private void DrawImage (double zoomFactor, Graphics graphics)
+    private void DrawImage(double zoomFactor, Graphics graphics)
     {
-      graphics.Clear (Color.FromRgb(0));
+      graphics.Clear(Color.FromRgb(0));
 
       var image = CurrentBitmap;
 
       if (image == null)
         return;
 
-      var grfxFactor = graphics.ClipBounds.Width / (double) graphics.ClipBounds.Height;
-      var imageFactor = image.Width / (double) image.Height;
+      var grfxFactor = graphics.ClipBounds.Width / (double)graphics.ClipBounds.Height;
+      var imageFactor = image.Width / (double)image.Height;
 
       double width;
       double height;
@@ -143,14 +143,10 @@ namespace PictureSorter
       while (x < 0 && x + width <= graphics.ClipBounds.Width)
         x++;
 
-      graphics.DrawImage (image, (float) x, (float) y, (float) width, (float) height);
-
-      //graphics.DrawText (string.Format ("x: {0} y: {1}", (int)x, (int)y), Font, Brushes.Red, 0, 0);
-      //graphics.DrawText (string.Format ("width: {0} height: {1}", (int)width, (int)height), Font, Brushes.Red, 0, 20);
-      //graphics.DrawText (string.Format ("bound-width: {0} bound-height: {1}", (int)graphics.ClipBounds.Width, (int)graphics.ClipBounds.Height), Font, Brushes.Red, 0, 40);
+      graphics.DrawImage(image, (float)x, (float)y, (float)width, (float)height);
     }
 
-    private void CurrentPicture_MouseDown (object sender, MouseEventArgs e)
+    private void CurrentPicture_MouseDown(object sender, MouseEventArgs e)
     {
       if (e.Buttons == MouseButtons.Primary)
       {
@@ -159,67 +155,67 @@ namespace PictureSorter
       }
     }
 
-    private void CurrentPicture_MouseMove (object sender, MouseEventArgs e)
+    private void CurrentPicture_MouseMove(object sender, MouseEventArgs e)
     {
       if (e.Buttons == MouseButtons.Primary)
       {
         CurrentPositionX = (int)e.Location.X - MouseDownPositionX;
         CurrentPositionY = (int)e.Location.Y - MouseDownPositionY;
 
-        //CurrentPicture.Refresh ();
+        Update();
       }
     }
 
-    private void PictureView_HelpButtonClicked (object sender, CancelEventArgs e)
+    private void PictureView_HelpButtonClicked(object sender, CancelEventArgs e)
     {
-      PictureViewController.ShowHelpScreen ();
+      PictureViewController.ShowHelpScreen();
     }
 
-    protected override void OnDragDrop (DragEventArgs drgevent)
+    protected override void OnDragDrop(DragEventArgs drgevent)
     {
-      // TODO: fix dragging
+      // IMPROVE: implement dragging into form. Currently, the form is not accepting any files.
       //var data = (string[])drgevent.Data.GetData (DataFormats.FileDrop);
-//
+      //
       //if (data.Length > 0)
       //{
       //  var droppedFile = data[0];
-//
+      //
       //  if (File.Exists (droppedFile))
       //    PictureViewController.SetDroppedFile (droppedFile);
       //}
 
-      base.OnDragDrop (drgevent);
+      base.OnDragDrop(drgevent);
     }
 
-    protected override void OnDragEnter (DragEventArgs drgevent)
+    protected override void OnDragEnter(DragEventArgs drgevent)
     {
-      // TODO: fix dragging
+      // IMPROVE: implement dragging into form. Currently, the form is not accepting any files.
       //if (drgevent.Data.GetDataPresent (DataFormats.FileDrop))
       //  drgevent.Effect = DragDropEffects.Move;
-//
-      base.OnDragEnter (drgevent);
+      //
+      base.OnDragEnter(drgevent);
     }
 
-    protected override void OnDragOver (DragEventArgs drgevent)
+    protected override void OnDragOver(DragEventArgs drgevent)
     {
-      // TODO: fix dragging
+      // IMPROVE: implement dragging into form. Currently, the form is not accepting any files.
       //if (drgevent.Data.GetDataPresent (DataFormats.FileDrop))
       //  drgevent.Effect = DragDropEffects.Move;
-      
-      base.OnDragOver (drgevent);
+
+      base.OnDragOver(drgevent);
     }
 
-    private void PictureView_MouseDoubleClick (object sender, MouseEventArgs e)
+    private void PictureView_MouseDoubleClick(object sender, MouseEventArgs e)
     {
-      PictureViewController.ToggleFullScreen ();
+      PictureViewController.ToggleFullScreen();
     }
 
-    private void CurrentPicture_DoubleClick (object sender, EventArgs e)
+    private void CurrentPicture_DoubleClick(object sender, EventArgs e)
     {
-      PictureViewController.ToggleFullScreen ();
+      PictureViewController.ToggleFullScreen();
     }
 
-    private void OnMouseWheel (object sender, MouseEventArgs mouseEventArgs)
+    private void OnMouseWheel(object sender, MouseEventArgs mouseEventArgs)
     {
       if (mouseEventArgs.Delta.Height > 0)
         PictureViewController.ZoomIn();
