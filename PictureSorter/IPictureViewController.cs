@@ -20,7 +20,7 @@ namespace PictureSorter
 
     void ZoomIn ();
     void ZoomOut ();
-    void ZoomDeefault ();
+    void ZoomDefault ();
     void ShowHelpScreen ();
     void SetDroppedFile (string fileName);
     void Refresh ();

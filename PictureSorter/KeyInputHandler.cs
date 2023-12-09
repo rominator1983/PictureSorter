@@ -14,10 +14,12 @@ namespace PictureSorter
 
     public void Handle (KeyEventArgs e)
     {
+      Console.WriteLine($"e.KeyData: {e.KeyData}");
+
       //if (e.KeyData == Keys.Delete)
       //  PictureViewController.MoveToTrashBin (handle);
 
-      if (e.Alt && e.KeyData == Keys.Enter)
+      if (e.KeyData == (Keys.Enter | Keys.LeftAlt) || e.KeyData == (Keys.Enter | Keys.RightAlt)  || e.KeyData == (Keys.Enter | Keys.Alt))
         PictureViewController.ToggleFullScreen ();
 
       if (e.KeyData == Keys.Left)
@@ -26,7 +28,7 @@ namespace PictureSorter
       if (e.KeyData == Keys.Right)
         PictureViewController.Next ();
 
-      if (e.KeyData == Keys.Escape || (e.KeyData == Keys.F4 && e.Control))
+      if (e.KeyData == Keys.Escape)
         PictureViewController.Close ();
 
       if (e.KeyData == Keys.S)
@@ -44,14 +46,14 @@ namespace PictureSorter
       if (e.KeyData == Keys.L)
         PictureViewController.RotateLeft ();
 
-      if (e.KeyData == Keys.Plus)
+      if (e.KeyData == Keys.Plus || e.KeyData == Keys.Add)
         PictureViewController.ZoomIn ();
 
-      if (e.KeyData == Keys.Minus)
+      if (e.KeyData == Keys.Minus || e.KeyData == Keys.Subtract)
         PictureViewController.ZoomOut ();
 
       if (e.KeyData == Keys.D0)
-        PictureViewController.ZoomDeefault ();
+        PictureViewController.ZoomDefault ();
 
       if (e.KeyData == Keys.F1)
         PictureViewController.ShowHelpScreen ();

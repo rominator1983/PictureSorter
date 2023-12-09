@@ -1,12 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
 using Eto.Drawing;
-using System.IO;
 using Eto.Forms;
+using Gdk;
 
 namespace PictureSorter
 {
-  public partial class PictureView : Form, IPictureView
+  public partial class PictureView : Eto.Forms.Form, IPictureView
   {
     public IKeyInputHandler KeyInputHandler { get; private set; }
     public IPictureViewController PictureViewController { get; private set; }
@@ -18,7 +18,7 @@ namespace PictureSorter
     public int MouseDownPositionX { get; private set; }
     public int MouseDownPositionY { get; private set; }
 
-    public PictureView(PictureViewController pictureViewController, KeyInputHandler keyInputHandler)
+    public PictureView(IPictureViewController pictureViewController, KeyInputHandler keyInputHandler)
     {
       InitializeComponent();
 
@@ -42,13 +42,12 @@ namespace PictureSorter
 
     private void Update()
     {
-      Console.WriteLine("Update");
       DrawImage(CurrentZoomFactor, CurrentPicture.CreateGraphics());
     }
 
     public void ToggleFullScreen()
     {
-      if (WindowState == WindowState.Maximized)
+      if (WindowState == Eto.Forms.WindowState.Maximized)
         SetNonFullScreen();
       else
         SetFullScreen();
@@ -56,17 +55,35 @@ namespace PictureSorter
 
     private void SetFullScreen()
     {
-      WindowState = WindowState.Maximized;
+      WindowState = Eto.Forms.WindowState.Maximized;
     }
 
     public void SetNonFullScreen()
     {
-      WindowState = WindowState.Normal;
+      WindowState = Eto.Forms.WindowState.Normal;
     }
 
     private void PictureForm_KeyDown(object sender, KeyEventArgs e)
     {
       KeyInputHandler.Handle(e);
+    }
+
+    // NOTE: fix for GTK not forwarding key down events for arrow keys
+    private void PictureForm_KeyPress(object sender, Gtk.KeyReleaseEventArgs e)
+    {
+      if (e.Event.Key == Gdk.Key.Left)
+        KeyInputHandler.Handle(new KeyEventArgs(Keys.Left, KeyEventType.KeyDown));
+
+      if (e.Event.Key == Gdk.Key.Right)
+        KeyInputHandler.Handle(new KeyEventArgs(Keys.Right, KeyEventType.KeyDown));
+    }
+
+    private void PictureForm_KeyUp(object sender, KeyEventArgs e)
+    {
+      // Console.WriteLine("PictureForm_KeyUp: "+ e.KeyData);
+
+      // if (e.KeyData == Keys.Left || e.KeyData == Keys.Right || e.KeyData == Keys.Up || e.KeyData == Keys.Down)
+      //   KeyInputHandler.Handle(e);
     }
 
     private void CurrentPictureOnPaint(object sender, PaintEventArgs paintEventArgs)
@@ -93,7 +110,7 @@ namespace PictureSorter
 
     private void DrawImage(double zoomFactor, Graphics graphics)
     {
-      graphics.Clear(Color.FromRgb(0));
+      graphics.Clear(Eto.Drawing.Color.FromRgb(0));
 
       var image = CurrentBitmap;
 

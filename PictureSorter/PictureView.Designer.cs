@@ -1,5 +1,6 @@
 ﻿using System;
 using Eto.Forms;
+using Eto.GtkSharp;
 
 namespace PictureSorter
 {
@@ -68,6 +69,9 @@ namespace PictureSorter
       this.WindowState = Eto.Forms.WindowState.Maximized;
       //this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.PictureView_HelpButtonClicked);
       this.KeyDown += new System.EventHandler<KeyEventArgs>(this.PictureForm_KeyDown);
+      //this.KeyDown += new System.EventHandler<KeyEventArgs>(this.PictureForm_KeyUp);
+      this.ToGtk().KeyReleaseEvent += new Gtk.KeyReleaseEventHandler(this.PictureForm_KeyPress);
+
       this.MouseDoubleClick += new System.EventHandler<MouseEventArgs>(this.PictureView_MouseDoubleClick);
     }
 

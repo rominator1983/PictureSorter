@@ -10,15 +10,15 @@ namespace PictureSorter
   public class PictureViewController : IPictureViewController
   {
     public struct SHITEMID
-{
-    public long cb;
-    public byte abID;
-}
+    {
+      public long cb;
+      public byte abID;
+    }
 
-  public struct ITEMIDLIST
-{
-    public SHITEMID mkid;
-}
+    public struct ITEMIDLIST
+    {
+      public SHITEMID mkid;
+    }
 
 
     //// The Desktop - virtual folder
@@ -59,83 +59,84 @@ namespace PictureSorter
     public const int MAX_PATH = 260;
 
 
-    [DllImport ("Shell32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
-    public static extern long SHGetSpecialFolderLocation (IntPtr hwndOwner, long nFolder, ITEMIDLIST pidl);
+    // TODO: noooooo
+    [DllImport("Shell32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+    public static extern long SHGetSpecialFolderLocation(IntPtr hwndOwner, long nFolder, ITEMIDLIST pidl);
 
     public IPictureView PictureView { get; private set; }
-    public IPictureCache PictureCache { get; private set;}
+    public IPictureCache PictureCache { get; private set; }
     public string BestOfFolder { get; private set; }
-    public double ZoomFactor { get; private set;} 
+    public double ZoomFactor { get; private set; }
 
-    public PictureViewController (IPictureCache pictureCache)
+    public PictureViewController(IPictureCache pictureCache)
     {
       PictureCache = pictureCache;
       ZoomFactor = 1.0;
     }
 
-    public void SetPictureForm (IPictureView pictureView)
+    public void SetPictureForm(IPictureView pictureView)
     {
       PictureView = pictureView;
-      SetCurrentPicture ();
+      SetCurrentPicture();
     }
 
-    public void ToggleFullScreen ()
+    public void ToggleFullScreen()
     {
-      PictureView.ToggleFullScreen ();
+      PictureView.ToggleFullScreen();
     }
 
-    public void Previous ()
+    public void Previous()
     {
-      PictureCache.Previous ();
-      SetCurrentPicture ();
+      PictureCache.Previous();
+      SetCurrentPicture();
     }
 
-    public void Next ()
+    public void Next()
     {
-      PictureCache.Next ();
-      SetCurrentPicture ();
+      PictureCache.Next();
+      SetCurrentPicture();
     }
 
     public void MoveCurrentToBestOf()
     {
       if (BestOfFolder == null)
-        SetBestOfFolder ();
+        SetBestOfFolder();
 
       if (BestOfFolder == null)
         return;
 
-      var targetPath = Path.Combine (BestOfFolder, Path.GetFileName (PictureCache.CurrentFileName));
+      var targetPath = Path.Combine(BestOfFolder, Path.GetFileName(PictureCache.CurrentFileName));
 
       if (FileExists(targetPath))
         return;
 
-      File.Move (PictureCache.CurrentFileName, targetPath);
+      File.Move(PictureCache.CurrentFileName, targetPath);
 
-      PictureCache.RefreshAfterFileManipulation ();
-      SetCurrentPicture ();
+      PictureCache.RefreshAfterFileManipulation();
+      SetCurrentPicture();
     }
 
-    public void CopyCurrentToBestOf ()
+    public void CopyCurrentToBestOf()
     {
       if (BestOfFolder == null)
-        SetBestOfFolder ();
+        SetBestOfFolder();
 
       if (BestOfFolder == null)
         return;
 
-      var targetPath = Path.Combine (BestOfFolder, Path.GetFileName (PictureCache.CurrentFileName));
+      var targetPath = Path.Combine(BestOfFolder, Path.GetFileName(PictureCache.CurrentFileName));
 
       if (FileExists(targetPath))
         return;
 
-      File.Copy (PictureCache.CurrentFileName, targetPath);
+      File.Copy(PictureCache.CurrentFileName, targetPath);
     }
 
-    private static bool FileExists (string targetPath)
+    private static bool FileExists(string targetPath)
     {
-      if (File.Exists (targetPath))
+      if (File.Exists(targetPath))
       {
-        MessageBox.Show (string.Format ("File '{0}' already exists.\r\n\r\nNothing has been changed.", targetPath),
+        MessageBox.Show(string.Format("File '{0}' already exists.\r\n\r\nNothing has been changed.", targetPath),
           "Error", MessageBoxButtons.OK, MessageBoxType.Warning);
 
         return true;
@@ -143,31 +144,31 @@ namespace PictureSorter
       return false;
     }
 
-    public void SetBestOfFolder ()
+    public void SetBestOfFolder()
     {
-      PictureView.SetNonFullScreen ();
-      var settingsViiew = new SettingsViiew {BestOfFolder = PictureCache.DirectoryName};
+      PictureView.SetNonFullScreen();
+      var settingsViiew = new SettingsViiew { BestOfFolder = PictureCache.DirectoryName };
 
-      settingsViiew.Show ();
+      settingsViiew.Show();
 
       BestOfFolder = settingsViiew.BestOfFolder;
     }
 
-    public void SetDroppedFile (string fileName)
+    public void SetDroppedFile(string fileName)
     {
-      PictureCache.UnloadCache ();
-      PictureCache.Initialize (fileName);
+      PictureCache.UnloadCache();
+      PictureCache.Initialize(fileName);
 
-      SetCurrentPicture ();
+      SetCurrentPicture();
     }
 
-    private void SetCurrentPicture ()
+    private void SetCurrentPicture()
     {
-      var currentPicture = GetCurrentPicture ();
-      PictureView.SetCurrentPicture (currentPicture);
+      var currentPicture = GetCurrentPicture();
+      PictureView.SetCurrentPicture(currentPicture);
     }
 
-    private Picture GetCurrentPicture ()
+    private Picture GetCurrentPicture()
     {
       return new Picture
       {
@@ -176,138 +177,138 @@ namespace PictureSorter
       };
     }
 
-    public void Close ()
+    public void Close()
     {
-      PictureView.Close ();
+      PictureView.Close();
     }
 
-    public void RotateRight ()
+    public void RotateRight()
     {
-      Rotate ("r");
-      PictureCache.RefreshAfterFileManipulation ();
-      SetCurrentPicture ();
+      Rotate("r");
+      PictureCache.RefreshAfterFileManipulation();
+      SetCurrentPicture();
     }
 
-    public void RotateLeft ()
+    public void RotateLeft()
     {
-      Rotate ("l");
-      PictureCache.RefreshAfterFileManipulation ();
-      SetCurrentPicture ();
+      Rotate("l");
+      PictureCache.RefreshAfterFileManipulation();
+      SetCurrentPicture();
     }
 
-    private void Rotate (string rotateParameter)
+    private void Rotate(string rotateParameter)
     {
       // Use DLL ?"C:\PROGRA~1\JPEGLO~1\contmenu.dll"
 
-      var jpegRotatorExe = GetJpegLoslessRotateExePath ();
+      var jpegRotatorExe = GetJpegLoslessRotateExePath();
 
-      if (!File.Exists (jpegRotatorExe))
+      if (!File.Exists(jpegRotatorExe))
       {
-        MessageBox.Show (string.Format ("Jpeg Lossless rotator not found at '{0}'. Check configuration file.", jpegRotatorExe));
+        MessageBox.Show(string.Format("Jpeg Lossless rotator not found at '{0}'. Check configuration file.", jpegRotatorExe));
         return;
       }
 
-      var process = new Process ();
+      var process = new Process();
       process.StartInfo.UseShellExecute = false;
       process.StartInfo.FileName = jpegRotatorExe;
       process.StartInfo.CreateNoWindow = true;
 
-      process.StartInfo.Arguments = string.Format ("-{0} \"{1}\"", rotateParameter, PictureCache.CurrentFileName);
+      process.StartInfo.Arguments = string.Format("-{0} \"{1}\"", rotateParameter, PictureCache.CurrentFileName);
 
-      process.Start ();
-      process.WaitForExit ();
+      process.Start();
+      process.WaitForExit();
     }
 
-    private string GetJpegLoslessRotateExePath ()
+    private string GetJpegLoslessRotateExePath()
     {
       // TODO: get path somehow
       return "";
       //return ConfigurationManager.AppSettings["JpegLoslessRotate"];
     }
 
-    public void ZoomIn ()
+    public void ZoomIn()
     {
-      ZoomFactor = Math.Min (ZoomFactor * 1.4142135623730950488016887242097, 1000);
-      PictureView.SetZoom (ZoomFactor);
+      ZoomFactor = Math.Min(ZoomFactor * 1.4142135623730950488016887242097, 1000);
+      PictureView.SetZoom(ZoomFactor);
     }
 
-    public void ZoomOut ()
+    public void ZoomOut()
     {
       ZoomFactor = ZoomFactor / 1.4142135623730950488016887242097;
 
       if (ZoomFactor <= 1.0)
       {
         ZoomFactor = 1.0;
-        PictureView.ResetZoomAndPosition ();
+        PictureView.ResetZoomAndPosition();
       }
       else
-        PictureView.SetZoom (ZoomFactor);
+        PictureView.SetZoom(ZoomFactor);
     }
 
-    public void ZoomDeefault ()
+    public void ZoomDefault()
     {
       ZoomFactor = 1.0;
-      PictureView.ResetZoomAndPosition ();
+      PictureView.ResetZoomAndPosition();
     }
 
-    public void ShowHelpScreen ()
+    public void ShowHelpScreen()
     {
-      new HelpView ().Show ();
+      new HelpView().Show();
     }
 
-    public void Refresh ()
+    public void Refresh()
     {
-      PictureCache.RefreshAfterFileManipulation ();
-      SetCurrentPicture ();
+      PictureCache.RefreshAfterFileManipulation();
+      SetCurrentPicture();
     }
 
-    public void Edit ()
+    public void Edit()
     {
       // TODO: get path somehow
 
       //var editProgramm = ConfigurationManager.AppSettings["EditProgram"];
       var editProgramm = "";
 
-      var process = new Process ();
+      var process = new Process();
       process.StartInfo.UseShellExecute = false;
       process.StartInfo.FileName = editProgramm;
       process.StartInfo.CreateNoWindow = true;
 
-      process.StartInfo.Arguments = string.Format ("\"{0}\"", PictureCache.CurrentFileName);
+      process.StartInfo.Arguments = string.Format("\"{0}\"", PictureCache.CurrentFileName);
 
       try
       {
-        process.Start ();
+        process.Start();
       }
       catch (Exception exception)
       {
-        MessageBox.Show ("Error starting edit program:\r\n\r\n" + exception.Message);
+        MessageBox.Show("Error starting edit program:\r\n\r\n" + exception.Message);
       }
     }
 
-    public void SortAlphabetically ()
+    public void SortAlphabetically()
     {
-      PictureCache.SortAlphabetically ();
+      PictureCache.SortAlphabetically();
     }
 
-    public void SortByDate ()
+    public void SortByDate()
     {
-      PictureCache.SortByDate ();
+      PictureCache.SortByDate();
     }
 
-    public void MoveToTrashBin (IntPtr handle)
+    public void MoveToTrashBin(IntPtr handle)
     {
-      ITEMIDLIST IDL = default (ITEMIDLIST);
-      var trashbinPath = SHGetSpecialFolderLocation (handle, CSIDL_PROGRAMS, IDL);
-      var targetPath = Path.Combine (BestOfFolder, Path.GetFileName (PictureCache.CurrentFileName));
+      ITEMIDLIST IDL = default(ITEMIDLIST);
+      var trashbinPath = SHGetSpecialFolderLocation(handle, CSIDL_PROGRAMS, IDL);
+      var targetPath = Path.Combine(BestOfFolder, Path.GetFileName(PictureCache.CurrentFileName));
 
-      if (FileExists (targetPath))
+      if (FileExists(targetPath))
         return;
 
-      File.Move (PictureCache.CurrentFileName, targetPath);
+      File.Move(PictureCache.CurrentFileName, targetPath);
 
-      PictureCache.RefreshAfterFileManipulation ();
-      SetCurrentPicture ();
+      PictureCache.RefreshAfterFileManipulation();
+      SetCurrentPicture();
     }
   }
 }
