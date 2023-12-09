@@ -1,5 +1,4 @@
 using System;
-using Eto.Drawing;
 
 namespace PictureSorter
 {
@@ -12,6 +11,6 @@ namespace PictureSorter
     public string FileName { get; set; }
     public byte[] FileContent { get; set; }
 
-    public Bitmap Bitmap { get; set; }
+    public SkiaSharp.SKBitmap Bitmap { get; set; }
   }
 }

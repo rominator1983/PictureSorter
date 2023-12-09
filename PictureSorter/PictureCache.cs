@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Gtk;
+using SkiaSharp;
 
 namespace PictureSorter
 {
@@ -22,12 +22,12 @@ namespace PictureSorter
     public HashSet<string> DirectoryContent { get; private set; }
 
     public string CurrentFileName { get; private set; }
-    public Bitmap CurrentBitmap { get; private set; }
+    public SKBitmap CurrentBitmap { get; private set; }
 
     private Guid _loadingID = Guid.Empty;
 
     private readonly Object _cacheMutex = new object ();
-    private readonly SortedDictionary<string, Bitmap> _cache = new SortedDictionary<string, Bitmap> ();
+    private readonly SortedDictionary<string, SKBitmap> _cache = new SortedDictionary<string, SKBitmap> ();
     private SortedBy Sorted = SortedBy.Alphabetically;
 
 
@@ -163,7 +163,7 @@ namespace PictureSorter
       {
         foreach (var fileToUnload in filesToUnload)
         {
-          Bitmap bitmapToDispose;
+          SKBitmap bitmapToDispose;
           if (_cache.TryGetValue (fileToUnload, out bitmapToDispose))
           {
             bitmapToDispose.Dispose ();
@@ -207,12 +207,12 @@ namespace PictureSorter
       return Array.IndexOf (directoryContent, currentFileName);
     }
 
-    private Bitmap GetCachedBitmap (string fileName, Guid loadingID)
+    private SKBitmap GetCachedBitmap (string fileName, Guid loadingID)
     {
       if (_loadingID != loadingID)
         return null;
 
-      Bitmap bitmap;
+      SKBitmap bitmap;
       if (_cache.TryGetValue (fileName, out bitmap))
         return bitmap;
 
@@ -230,22 +230,24 @@ namespace PictureSorter
       }
     }
 
-    private Bitmap CreateBitmap (string fileName)
+    private SKBitmap CreateBitmap (string fileName)
     {
       try
       {
+        Console.WriteLine ("CreateBitmap: " + fileName);
         using (var fileStream = new FileStream (fileName, FileMode.Open))
-          return CorrectRotation (new Bitmap (fileStream));
+          return CorrectRotation (SKBitmap.Decode(fileStream));
       }
       catch (Exception ex)
       {
+        Console.WriteLine ($"Error reading image file: {fileName}\r\n{ex}");
         return null;
       }
     }
 
-    private static Bitmap CorrectRotation (Bitmap bitmap)
+    private static SKBitmap CorrectRotation (SKBitmap bitmap)
     {
-      // IMPROVE: re-implement rotation correction. This might not be needed for newer files.
+    // IMPROVE: re-implement rotation correction. This might not be needed for newer files.
      // if (Array.IndexOf (bitmap.PropertyIdList, 274) > -1)
      // {
      //   var values = bitmap.GetPropertyItem (274).Value;

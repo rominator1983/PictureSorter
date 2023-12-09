@@ -3,14 +3,15 @@ using System.ComponentModel;
 using Eto.Drawing;
 using Eto.Forms;
 using Gdk;
+using SkiaSharp;
 
 namespace PictureSorter
 {
-  public partial class PictureView : Eto.Forms.Form, IPictureView
+  public partial class PictureView : Form, IPictureView
   {
     public IKeyInputHandler KeyInputHandler { get; private set; }
     public IPictureViewController PictureViewController { get; private set; }
-    public Bitmap CurrentBitmap { get; private set; }
+    public SkiaSharp.SKBitmap CurrentBitmap { get; private set; }
     public double CurrentZoomFactor { get; private set; }
     public float CurrentPositionX { get; private set; }
     public float CurrentPositionY { get; private set; }
@@ -42,7 +43,9 @@ namespace PictureSorter
 
     private void Update()
     {
-      DrawImage(CurrentZoomFactor, CurrentPicture.CreateGraphics());
+      Console.WriteLine("Update");
+      CurrentPicture.Invalidate();
+      //DrawImage(CurrentZoomFactor,  CurrentPicture.Canvas);
     }
 
     public void ToggleFullScreen()
@@ -86,10 +89,10 @@ namespace PictureSorter
       //   KeyInputHandler.Handle(e);
     }
 
-    private void CurrentPictureOnPaint(object sender, PaintEventArgs paintEventArgs)
+    private void CurrentPictureOnPaint(SKSurface sKSurface)
     {
-      DrawImage(CurrentZoomFactor, paintEventArgs.Graphics);
-      Update();
+      DrawImage(CurrentZoomFactor, sKSurface.Canvas);
+      //Update();
     }
 
     public void ResetZoomAndPosition()
@@ -108,16 +111,18 @@ namespace PictureSorter
       Update();
     }
 
-    private void DrawImage(double zoomFactor, Graphics graphics)
+    private void DrawImage(double zoomFactor, SKCanvas graphics)
     {
-      graphics.Clear(Eto.Drawing.Color.FromRgb(0));
+      Console.WriteLine("DrawImage: " + zoomFactor);
+
+      graphics.Clear(new SKColor(0, 0, 0));
 
       var image = CurrentBitmap;
 
       if (image == null)
         return;
 
-      var grfxFactor = graphics.ClipBounds.Width / (double)graphics.ClipBounds.Height;
+      var grfxFactor = graphics.LocalClipBounds.Width / (double)graphics.LocalClipBounds.Height;
       var imageFactor = image.Width / (double)image.Height;
 
       double width;
@@ -128,39 +133,39 @@ namespace PictureSorter
       if (grfxFactor > imageFactor)
       {
         // use height for scaling
-        var scale = image.Height / graphics.ClipBounds.Height;
+        var scale = image.Height / graphics.LocalClipBounds.Height;
 
         width = image.Width / scale * zoomFactor;
-        height = graphics.ClipBounds.Height * zoomFactor;
+        height = graphics.LocalClipBounds.Height * zoomFactor;
 
-        x = CurrentPositionX + graphics.ClipBounds.Width / 2d - (width / 2d);
-        y = CurrentPositionY + graphics.ClipBounds.Height / 2d - (height / 2d);
+        x = CurrentPositionX + graphics.LocalClipBounds.Width / 2d - (width / 2d);
+        y = CurrentPositionY + graphics.LocalClipBounds.Height / 2d - (height / 2d);
       }
       else
       {
         // use width for scaling
-        var scale = image.Width / graphics.ClipBounds.Width;
+        var scale = image.Width / graphics.LocalClipBounds.Width;
 
-        width = graphics.ClipBounds.Width * zoomFactor;
+        width = graphics.LocalClipBounds.Width * zoomFactor;
         height = image.Height / scale * zoomFactor;
 
-        x = CurrentPositionX + graphics.ClipBounds.Width / 2d - (width / 2d);
-        y = CurrentPositionY + graphics.ClipBounds.Height / 2d - (height / 2d);
+        x = CurrentPositionX + graphics.LocalClipBounds.Width / 2d - (width / 2d);
+        y = CurrentPositionY + graphics.LocalClipBounds.Height / 2d - (height / 2d);
       }
 
-      while (y > 0 && (height + y) >= graphics.ClipBounds.Height)
+      while (y > 0 && (height + y) >= graphics.LocalClipBounds.Height)
         y--;
 
-      while (y < 0 && y + height <= graphics.ClipBounds.Height)
+      while (y < 0 && y + height <= graphics.LocalClipBounds.Height)
         y++;
 
-      while (x > 0 && (width + x) >= graphics.ClipBounds.Width)
+      while (x > 0 && (width + x) >= graphics.LocalClipBounds.Width)
         x--;
 
-      while (x < 0 && x + width <= graphics.ClipBounds.Width)
+      while (x < 0 && x + width <= graphics.LocalClipBounds.Width)
         x++;
 
-      graphics.DrawImage(image, (float)x, (float)y, (float)width, (float)height);
+      graphics.DrawBitmap(CurrentBitmap, new SKRect((float)x, (float)y, (float)width, (float)height));
     }
 
     private void CurrentPicture_MouseDown(object sender, MouseEventArgs e)

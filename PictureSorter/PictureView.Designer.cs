@@ -1,6 +1,9 @@
 ﻿using System;
+using Eto;
 using Eto.Forms;
+using Eto.Forms.Controls.SkiaSharp.GTK;
 using Eto.GtkSharp;
+using static Eto.Forms.Controls.SkiaSharp.SKControl;
 
 namespace PictureSorter
 {
@@ -32,7 +35,10 @@ namespace PictureSorter
     /// </summary>
     private void InitializeComponent ()
     {
-      this.CurrentPicture = new Eto.Forms.Drawable();
+      //_ = new Widget();
+
+      Eto.Platform.Instance.Add<ISKControl>(() => new SKControlHandler { BackgroundColor = Eto.Drawing.Colors.Red });
+      this.CurrentPicture = new Eto.Forms.Controls.SkiaSharp.SKControl();
       // 
       // CurrentPicture
       // 
@@ -48,7 +54,7 @@ namespace PictureSorter
       this.CurrentPicture.MouseDown += new System.EventHandler<MouseEventArgs>(this.CurrentPicture_MouseDown);
       this.CurrentPicture.MouseMove += new System.EventHandler<MouseEventArgs>(this.CurrentPicture_MouseMove);
 
-      this.CurrentPicture.Paint += CurrentPictureOnPaint;
+      this.CurrentPicture.PaintSurfaceAction += CurrentPictureOnPaint;
 
       // 
       // PictureView
@@ -77,6 +83,6 @@ namespace PictureSorter
 
     #endregion
 
-    private Eto.Forms.Drawable CurrentPicture;
+    private Eto.Forms.Controls.SkiaSharp.SKControl CurrentPicture;
   }
 }

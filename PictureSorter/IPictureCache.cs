@@ -1,5 +1,6 @@
 ﻿using System;
 using Eto.Drawing;
+using SkiaSharp;
 
 namespace PictureSorter
 {
@@ -9,7 +10,7 @@ namespace PictureSorter
     void Next();
     void Previous ();
     string CurrentFileName { get; }
-    Bitmap CurrentBitmap { get; }
+    SKBitmap CurrentBitmap { get; }
     string DirectoryName { get; }
     void RefreshAfterFileManipulation ();
     void UnloadCache();

@@ -52,7 +52,7 @@ namespace PictureSorter
       if (e.KeyData == Keys.Minus || e.KeyData == Keys.Subtract)
         PictureViewController.ZoomOut ();
 
-      if (e.KeyData == Keys.D0)
+      if (e.KeyData == Keys.D0 || e.KeyData == Keys.Keypad0)
         PictureViewController.ZoomDefault ();
 
       if (e.KeyData == Keys.F1)
