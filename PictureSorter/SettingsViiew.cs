@@ -19,7 +19,7 @@ namespace PictureSorter
     {
       base.OnLoad (e);
 
-      var suggestedBestOf = BestOfFolder + "\\Best Of";
+      var suggestedBestOf = BestOfFolder + "/Best Of";
 
       if (Directory.Exists (suggestedBestOf))
         BestOfFolder = suggestedBestOf;

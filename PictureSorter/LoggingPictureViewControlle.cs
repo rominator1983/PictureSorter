@@ -124,9 +124,9 @@ public class LoggingPictureViewController : IPictureViewController
         _inner.SortByDate();
     }
 
-    public void MoveToTrashBin(IntPtr handle)
+    public void MoveToTrashBin()
     {
         Console.WriteLine("MoveToTrashBin method called");
-        _inner.MoveToTrashBin(handle);
+        _inner.MoveToTrashBin();
     }
 }

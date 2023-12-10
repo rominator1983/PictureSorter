@@ -291,19 +291,17 @@ namespace PictureSorter
       PictureCache.SortByDate();
     }
 
-    public void MoveToTrashBin(IntPtr handle)
+    public void MoveToTrashBin()
     {
-      ITEMIDLIST IDL = default(ITEMIDLIST);
-      var trashbinPath = SHGetSpecialFolderLocation(handle, CSIDL_PROGRAMS, IDL);
-      var targetPath = Path.Combine(BestOfFolder, Path.GetFileName(PictureCache.CurrentFileName));
+      MessageBox.Show("Not implemented yet.");
+      
+      // TODO: test/implement
+      return;
 
-      if (FileExists(targetPath))
-        return;
+      // File.Move(PictureCache.CurrentFileName, "~/.local/share/Trash/files");
 
-      File.Move(PictureCache.CurrentFileName, targetPath);
-
-      PictureCache.RefreshAfterFileManipulation();
-      SetCurrentPicture();
+      // PictureCache.RefreshAfterFileManipulation();
+      // SetCurrentPicture();
     }
   }
 }

@@ -16,9 +16,8 @@ namespace PictureSorter
     {
       //Console.WriteLine($"e.KeyData: {e.KeyData}");
 
-      // TODO: implement recycle bin feature
-      //if (e.KeyData == Keys.Delete)
-      //  PictureViewController.MoveToTrashBin (handle);
+      if (e.KeyData == Keys.Delete)
+        PictureViewController.MoveToTrashBin();
 
       if (e.KeyData == (Keys.Enter | Keys.LeftAlt) || e.KeyData == (Keys.Enter | Keys.RightAlt)  || e.KeyData == (Keys.Enter | Keys.Alt))
         PictureViewController.ToggleFullScreen ();

@@ -28,6 +28,6 @@ namespace PictureSorter
 
     void SortAlphabetically ();
     void SortByDate ();
-    void MoveToTrashBin (IntPtr handle);
+    void MoveToTrashBin ();
   }
 }
