@@ -7,68 +7,68 @@ namespace PictureSorter
   {
     public IPictureViewController PictureViewController { get; private set; }
 
-    public KeyInputHandler (IPictureViewController pictureViewController)
+    public KeyInputHandler(IPictureViewController pictureViewController)
     {
       PictureViewController = pictureViewController;
     }
 
-    public void Handle (KeyEventArgs e)
+    public void Handle(KeyEventArgs e)
     {
       //Console.WriteLine($"e.KeyData: {e.KeyData}");
 
       if (e.KeyData == Keys.Delete)
         PictureViewController.MoveToTrashBin();
 
-      if (e.KeyData == (Keys.Enter | Keys.LeftAlt) || e.KeyData == (Keys.Enter | Keys.RightAlt)  || e.KeyData == (Keys.Enter | Keys.Alt))
-        PictureViewController.ToggleFullScreen ();
+      if (e.KeyData == (Keys.Enter | Keys.LeftAlt) || e.KeyData == (Keys.Enter | Keys.RightAlt) || e.KeyData == (Keys.Enter | Keys.Alt))
+        PictureViewController.ToggleFullScreen();
 
       if (e.KeyData == Keys.Left)
-        PictureViewController.Previous ();
+        PictureViewController.Previous();
 
       if (e.KeyData == Keys.Right)
-        PictureViewController.Next ();
+        PictureViewController.Next();
 
       if (e.KeyData == Keys.Escape)
-        PictureViewController.Close ();
+        PictureViewController.Close();
 
       if (e.KeyData == Keys.S)
-        PictureViewController.SetBestOfFolder ();
+        PictureViewController.SetBestOfFolder();
 
       if (e.KeyData == Keys.B)
-        PictureViewController.MoveCurrentToBestOf ();
+        PictureViewController.MoveCurrentToBestOf();
 
       if (e.KeyData == Keys.C)
-        PictureViewController.CopyCurrentToBestOf ();
+        PictureViewController.CopyCurrentToBestOf();
 
       if (e.KeyData == Keys.R)
-        PictureViewController.RotateRight ();
+        PictureViewController.RotateRight();
 
       if (e.KeyData == Keys.L)
-        PictureViewController.RotateLeft ();
+        PictureViewController.RotateLeft();
 
       if (e.KeyData == Keys.Plus || e.KeyData == Keys.Add)
-        PictureViewController.ZoomIn ();
+        PictureViewController.ZoomIn();
 
       if (e.KeyData == Keys.Minus || e.KeyData == Keys.Subtract)
-        PictureViewController.ZoomOut ();
+        PictureViewController.ZoomOut();
 
       if (e.KeyData == Keys.D0 || e.KeyData == Keys.Keypad0)
-        PictureViewController.ZoomDefault ();
+        PictureViewController.ZoomDefault();
 
       if (e.KeyData == Keys.F1)
-        PictureViewController.ShowHelpScreen ();
+        PictureViewController.ShowHelpScreen();
 
       if (e.KeyData == Keys.F5)
-        PictureViewController.Refresh ();
+        PictureViewController.Refresh();
 
       if (e.KeyData == Keys.E)
-        PictureViewController.Edit ();
+        PictureViewController.Edit();
 
       if (e.KeyData == Keys.A)
-        PictureViewController.SortAlphabetically ();
+        PictureViewController.SortAlphabetically();
 
       if (e.KeyData == Keys.D)
-        PictureViewController.SortByDate ();
+        PictureViewController.SortByDate();
     }
   }
 }

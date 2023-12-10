@@ -245,7 +245,7 @@ namespace PictureSorter
     public void MoveToTrashBin()
     {
       MessageBox.Show("Not implemented yet.");
-      
+
       // TODO: test/implement
       return;
 

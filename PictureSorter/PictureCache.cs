@@ -384,21 +384,19 @@ namespace PictureSorter
       AssureEnoughFilesAreCached(CurrentFileName, 2, 3);
     }
 
-    public static DateTime GetDateTakenFromImage(string path)
+    public static DateTime? GetDateTakenFromImage(string path)
     {
-      var regex = new Regex(":");
+      using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
 
-      using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
+      var directories = ImageMetadataReader.ReadMetadata(fileStream);
+      
+      var subIfdDirectory = directories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
+      
+      var dateTaken = subIfdDirectory?.GetDateTime(ExifDirectoryBase.TagDateTimeOriginal);
 
-      using (var image = new Eto.Drawing.Bitmap(fileStream))
-      {
-        var propertyItem = image.Properties.Get<string>(36867);
-        var dateTaken = regex.Replace(propertyItem, "-", 2);
-
-        Console.WriteLine($"GetDateTakenFromImage: {path} -> {dateTaken}");
-
-        return DateTime.Parse(dateTaken);
-      }
+      Console.WriteLine($"GetDateTakenFromImage: {path} -> {dateTaken}");
+      
+      return dateTaken;
     }
   }
 }
