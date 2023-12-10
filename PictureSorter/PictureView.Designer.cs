@@ -1,9 +1,7 @@
 ﻿using System;
-using Eto;
 using Eto.Forms;
-using Eto.Forms.Controls.SkiaSharp.GTK;
 using Eto.GtkSharp;
-using static Eto.Forms.Controls.SkiaSharp.SKControl;
+using PictureSorter.SkiaGtk;
 
 namespace PictureSorter
 {
@@ -18,13 +16,14 @@ namespace PictureSorter
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-    protected override void Dispose (bool disposing)
+    protected override void Dispose(bool disposing)
     {
       if (disposing && (components != null))
       {
-        components.Dispose ();
+        components.Dispose();
       }
-      base.Dispose (disposing);
+
+      base.Dispose(disposing);
     }
 
     #region Windows Form Designer generated code
@@ -33,16 +32,20 @@ namespace PictureSorter
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
-    private void InitializeComponent ()
+    private void InitializeComponent()
     {
       //_ = new Widget();
 
-      Eto.Platform.Instance.Add<ISKControl>(() => new SKControlHandler { BackgroundColor = Eto.Drawing.Colors.Red });
-      this.CurrentPicture = new Eto.Forms.Controls.SkiaSharp.SKControl();
+      Eto.Platform.Instance.Add<MySKControl.ISKControl>(() =>
+      {
+        return new MySKControlHandler { BackgroundColor = Eto.Drawing.Colors.Red };
+      });
+
+      this.CurrentPicture = new MySKControl();
       // 
       // CurrentPicture
       // 
-      this.CurrentPicture.Cursor = Eto.Forms.Cursors.Crosshair;
+      this.CurrentPicture.Cursor = Eto.Forms.Cursors.Pointer;
       //this.CurrentPicture.Dock = Eto.Forms.DockStyle.Fill;
       //this.CurrentPicture.Location = new Eto.Drawing.Point(0, 0);
       //this.CurrentPicture.Name = "CurrentPicture";
@@ -54,7 +57,7 @@ namespace PictureSorter
       this.CurrentPicture.MouseDown += new System.EventHandler<MouseEventArgs>(this.CurrentPicture_MouseDown);
       this.CurrentPicture.MouseMove += new System.EventHandler<MouseEventArgs>(this.CurrentPicture_MouseMove);
 
-      this.CurrentPicture.PaintSurfaceAction += CurrentPictureOnPaint;
+      this.CurrentPicture.PaintSurfaceAction = CurrentPictureOnPaint;
 
       // 
       // PictureView
@@ -83,6 +86,6 @@ namespace PictureSorter
 
     #endregion
 
-    private Eto.Forms.Controls.SkiaSharp.SKControl CurrentPicture;
+    private MySKControl CurrentPicture;
   }
 }

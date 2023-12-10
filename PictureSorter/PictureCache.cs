@@ -7,6 +7,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SkiaSharp;
+using MetadataExtractor.Formats.Exif;
+using MetadataExtractor;
 
 namespace PictureSorter
 {
@@ -26,154 +28,155 @@ namespace PictureSorter
 
     private Guid _loadingID = Guid.Empty;
 
-    private readonly Object _cacheMutex = new object ();
-    private readonly SortedDictionary<string, SKBitmap> _cache = new SortedDictionary<string, SKBitmap> ();
+    private readonly Object _cacheMutex = new object();
+    private readonly SortedDictionary<string, SKBitmap> _cache = new SortedDictionary<string, SKBitmap>();
     private SortedBy Sorted = SortedBy.Alphabetically;
 
 
-    public PictureCache ()
+    public PictureCache()
     {
     }
 
-    public void Initialize (string fileName)
+    public void Initialize(string fileName)
     {
-      SetCurrent (fileName);
+      fileName = Path.GetFullPath(fileName);
+      SetCurrent(fileName);
 
-      DirectoryName = Path.GetDirectoryName (Path.GetFullPath(fileName));
-      LoadFilesInFolder ();
+      DirectoryName = Path.GetDirectoryName(fileName);
+      LoadFilesInFolder();
 
-      AssureEnoughFilesAreCached (fileName, 2, 3);
+      AssureEnoughFilesAreCached(fileName, 2, 3);
     }
 
     public void Next()
     {
-      ChangePicture (1, 4, 10);
+      ChangePicture(1, 4, 10);
     }
 
-    public void Previous ()
+    public void Previous()
     {
-      ChangePicture (-1, 5, 11);
+      ChangePicture(-1, 5, 11);
     }
 
-    private void ChangePicture (int offset, int downPictures, int upPictures)
+    private void ChangePicture(int offset, int downPictures, int upPictures)
     {
-      var directoryContent = DirectoryContent.ToArray ();
-      var i = GetIndexOf (directoryContent, CurrentFileName) + offset;
+      var directoryContent = DirectoryContent.ToArray();
+      var i = GetIndexOf(directoryContent, CurrentFileName) + offset;
 
       if (i >= 0 && i < directoryContent.Length)
       {
-        var fileName = directoryContent [i];
-        SetCurrent (fileName);
-        AssureEnoughFilesAreCachedInThread (fileName, downPictures, upPictures);
+        var fileName = directoryContent[i];
+        SetCurrent(fileName);
+        AssureEnoughFilesAreCachedInThread(fileName, downPictures, upPictures);
       }
     }
 
-    public void RefreshAfterFileManipulation ()
+    public void RefreshAfterFileManipulation()
     {
-      LoadFilesInFolder ();
+      LoadFilesInFolder();
 
       if (DirectoryContent.Count == 0)
         return;
 
-      if (!DirectoryContent.Contains (CurrentFileName))
+      if (!DirectoryContent.Contains(CurrentFileName))
       {
-        CurrentBitmap.Dispose ();
+        CurrentBitmap.Dispose();
 
-        var directoryContentWithPreviousSelectedElement = new HashSet<string> (DirectoryContent);
-        directoryContentWithPreviousSelectedElement.Add (CurrentFileName);
-        var directoryContentWithPreviousSelectedElementOrdered = directoryContentWithPreviousSelectedElement.OrderBy (_ => _).ToArray();
+        var directoryContentWithPreviousSelectedElement = new HashSet<string>(DirectoryContent);
+        directoryContentWithPreviousSelectedElement.Add(CurrentFileName);
+        var directoryContentWithPreviousSelectedElementOrdered = directoryContentWithPreviousSelectedElement.OrderBy(_ => _).ToArray();
 
-        var index = GetIndexOf (directoryContentWithPreviousSelectedElementOrdered, CurrentFileName);
+        var index = GetIndexOf(directoryContentWithPreviousSelectedElementOrdered, CurrentFileName);
 
-        index = Math.Min (DirectoryContent.Count - 1, index);
+        index = Math.Min(DirectoryContent.Count - 1, index);
 
-        var fileName = DirectoryContent.ToArray() [index];
-        SetCurrent (fileName);
+        var fileName = DirectoryContent.ToArray()[index];
+        SetCurrent(fileName);
 
-        AssureEnoughFilesAreCachedInThread (fileName, 5, 5);
+        AssureEnoughFilesAreCachedInThread(fileName, 5, 5);
       }
       else
       {
-        CurrentBitmap.Dispose ();
+        CurrentBitmap.Dispose();
         lock (_cacheMutex)
         {
-          _cache.Remove (CurrentFileName);
-          SetCurrent (CurrentFileName);
+          _cache.Remove(CurrentFileName);
+          SetCurrent(CurrentFileName);
         }
       }
     }
 
-    private void LoadFilesInFolder ()
+    private void LoadFilesInFolder()
     {
-      Func<string, string, bool> fileFilter = (fileName, extension) => fileName.EndsWith (extension, StringComparison.CurrentCultureIgnoreCase);
+      Func<string, string, bool> fileFilter = (fileName, extension) => fileName.EndsWith(extension, StringComparison.CurrentCultureIgnoreCase);
 
-      var filesOfFFolder = Directory.EnumerateFiles (DirectoryName)
-        .Where (fileName => 
-            fileFilter (fileName, ".jpg") ||
-            fileFilter (fileName, ".jpeg") ||
-            fileFilter (fileName, ".png") ||
-            fileFilter (fileName, ".bmp") ||
-            fileFilter (fileName, ".tiff") ||
-            fileFilter (fileName, ".gif"));
+      var filesOfFFolder = System.IO.Directory.EnumerateFiles(DirectoryName)
+        .Where(fileName =>
+            fileFilter(fileName, ".jpg") ||
+            fileFilter(fileName, ".jpeg") ||
+            fileFilter(fileName, ".png") ||
+            fileFilter(fileName, ".bmp") ||
+            fileFilter(fileName, ".tiff") ||
+            fileFilter(fileName, ".gif"));
 
       if (Sorted == SortedBy.Date)
-        DirectoryContent = new HashSet<string> (filesOfFFolder.OrderBy (GetDateTakenFromImage));
+        DirectoryContent = new HashSet<string>(filesOfFFolder.OrderBy(GetDateTakenFromImage));
       else
-        DirectoryContent = new HashSet<string> (filesOfFFolder.OrderBy (_ => _));
+        DirectoryContent = new HashSet<string>(filesOfFFolder.OrderBy(_ => _));
     }
 
-    private void SetCurrent (string fileName)
+    private void SetCurrent(string fileName)
     {
-      var bitmap = GetCachedBitmap (fileName, SetNewLoadingID ());
+      var bitmap = GetCachedBitmap(fileName, SetNewLoadingID());
 
       if (bitmap == null)
         return;
-      
+
       CurrentFileName = fileName;
       CurrentBitmap = bitmap;
     }
 
-    private Guid SetNewLoadingID ()
+    private Guid SetNewLoadingID()
     {
-      return _loadingID = Guid.NewGuid ();
+      return _loadingID = Guid.NewGuid();
     }
 
-    private void AssureEnoughFilesAreCachedInThread (string fileName, int downPictures, int upPictures)
+    private void AssureEnoughFilesAreCachedInThread(string fileName, int downPictures, int upPictures)
     {
-      var task = new Task (() => AssureEnoughFilesAreCached (fileName, downPictures, upPictures));
-      task.Start ();
+      var task = new Task(() => AssureEnoughFilesAreCached(fileName, downPictures, upPictures));
+      task.Start();
     }
 
-    private void AssureEnoughFilesAreCached (string fileName, int downPictures, int upPictures)
+    private void AssureEnoughFilesAreCached(string fileName, int downPictures, int upPictures)
     {
       var loadingIDForThread = _loadingID;
-      var directoryContent = DirectoryContent.ToArray ();
+      var directoryContent = DirectoryContent.ToArray();
 
-      var index = GetIndexOf (directoryContent, fileName);
-      var lowerBound = Math.Max (0, index - downPictures);
-      var upperBound = Math.Min (directoryContent.Length - 1, index + upPictures);
+      var index = GetIndexOf(directoryContent, fileName);
+      var lowerBound = Math.Max(0, index - downPictures);
+      var upperBound = Math.Min(directoryContent.Length - 1, index + upPictures);
 
-      var filesToLoad = directoryContent.Where (
+      var filesToLoad = directoryContent.Where(
           (takeFileName, takeIndex) => takeIndex >= lowerBound && takeIndex <= upperBound)
-          .ToArray ();
+          .ToArray();
 
-      var filesToUnload = directoryContent.Where (fileToUnload => !filesToLoad.Contains (fileToUnload));
+      var filesToUnload = directoryContent.Where(fileToUnload => !filesToLoad.Contains(fileToUnload));
 
       lock (_cacheMutex)
       {
         foreach (var fileToUnload in filesToUnload)
         {
           SKBitmap bitmapToDispose;
-          if (_cache.TryGetValue (fileToUnload, out bitmapToDispose))
+          if (_cache.TryGetValue(fileToUnload, out bitmapToDispose))
           {
-            bitmapToDispose.Dispose ();
-            _cache.Remove (fileToUnload);
+            bitmapToDispose.Dispose();
+            _cache.Remove(fileToUnload);
           }
         }
       }
 
-      var filesToLoadStackMutex = new object ();
-      var filesToLoadStack = new Stack<string> (filesToLoad);
+      var filesToLoadStackMutex = new object();
+      var filesToLoadStack = new Stack<string>(filesToLoad);
 
       System.Action loadPicture = () =>
       {
@@ -185,162 +188,216 @@ namespace PictureSorter
             if (filesToLoadStack.Count <= 0)
               break;
 
-            fileToLoad = filesToLoadStack.Pop ();
+            fileToLoad = filesToLoadStack.Pop();
           }
-          GetCachedBitmap (fileToLoad, loadingIDForThread);
+          GetCachedBitmap(fileToLoad, loadingIDForThread);
         }
       };
 
-      var task1 = new Task (loadPicture);
-      var task2 = new Task (loadPicture);
-      var task3 = new Task (loadPicture);
-      var task4 = new Task (loadPicture);
+      var task1 = new Task(loadPicture);
+      var task2 = new Task(loadPicture);
+      var task3 = new Task(loadPicture);
+      var task4 = new Task(loadPicture);
 
-      task1.Start ();
-      task2.Start ();
-      task3.Start ();
-      task4.Start ();
+      task1.Start();
+      task2.Start();
+      task3.Start();
+      task4.Start();
     }
 
-    private int GetIndexOf (string[] directoryContent, string currentFileName)
+    private int GetIndexOf(string[] directoryContent, string currentFileName)
     {
-      return Array.IndexOf (directoryContent, currentFileName);
+      return Array.IndexOf(directoryContent, currentFileName);
     }
 
-    private SKBitmap GetCachedBitmap (string fileName, Guid loadingID)
+    private SKBitmap GetCachedBitmap(string fileName, Guid loadingID)
     {
       if (_loadingID != loadingID)
         return null;
 
       SKBitmap bitmap;
-      if (_cache.TryGetValue (fileName, out bitmap))
+      if (_cache.TryGetValue(fileName, out bitmap))
         return bitmap;
 
       lock (_cacheMutex)
       {
-        if (_cache.TryGetValue (fileName, out bitmap))
+        if (_cache.TryGetValue(fileName, out bitmap))
           return bitmap;
 
-        bitmap = CreateBitmap (fileName);
+        bitmap = CreateBitmap(fileName);
 
         if (bitmap != null)
-          _cache.Add (fileName, bitmap);
+          _cache.Add(fileName, bitmap);
 
         return bitmap;
       }
     }
 
-    private SKBitmap CreateBitmap (string fileName)
+    public enum ImageOrientation
+    {
+      None = 0,
+      FlipHorizontal,
+      RotateBy180Degrees,
+      FlipVertical,
+      RotateBy90DegreesAndFlipVertical,
+      RotateBy90Degrees,
+      RotateBy270DegreesAndFlipVertical,
+      RotateBy270Degrees,
+    }
+
+    private SKBitmap CreateBitmap(string fileName)
     {
       try
       {
-        Console.WriteLine ("CreateBitmap: " + fileName);
-        using (var fileStream = new FileStream (fileName, FileMode.Open))
-          return CorrectRotation (SKBitmap.Decode(fileStream));
+        Console.WriteLine("CreateBitmap: " + fileName);
+        using (var fileStream = new FileStream(fileName, FileMode.Open))
+        {
+          var imageOrientation = GetOrientation(fileStream);
+          return CorrectRotation(SKBitmap.Decode(fileStream), imageOrientation);
+        }
       }
       catch (Exception ex)
       {
-        Console.WriteLine ($"Error reading image file: {fileName}\r\n{ex}");
+        Console.WriteLine($"Error reading image file: {fileName}\r\n{ex}");
         return null;
       }
     }
 
-    private static SKBitmap CorrectRotation (SKBitmap bitmap)
+    private static ImageOrientation GetOrientation(FileStream fileStream)
     {
-    // IMPROVE: re-implement rotation correction. This might not be needed for newer files.
-     // if (Array.IndexOf (bitmap.PropertyIdList, 274) > -1)
-     // {
-     //   var values = bitmap.GetPropertyItem (274).Value;
-     //   //var dateTakenPropertyItem = bitmap.GetPropertyItem (0x9003);
-     //   //var dateTakenString = Encoding.UTF8.GetString (dateTakenPropertyItem.Value);
-     //   //var regex = new Regex (":");
-     //   //dateTakenString = dateTakenString.Substring (0, dateTakenString.Length - 1);
-     //   //dateTakenString = regex.Replace (dateTakenString, "-", 2);
-     //   //var dateTaken = DateTime.Parse (dateTakenString);
-//
-     //   if (values.Length < 1)
-     //     return bitmap;
-//
-     //   var orientation = (int) values [0];
-     //   switch (orientation)
-     //   {
-     //     case 1:
-     //       // No rotation required.
-     //       break;
-     //     case 2:
-     //       bitmap.RotateFlip (RotateFlipType.RotateNoneFlipX);
-     //       break;
-     //     case 3:
-     //       bitmap.RotateFlip (RotateFlipType.Rotate180FlipNone);
-     //       break;
-     //     case 4:
-     //       bitmap.RotateFlip (RotateFlipType.Rotate180FlipX);
-     //       break;
-     //     case 5:
-     //       bitmap.RotateFlip (RotateFlipType.Rotate90FlipX);
-     //       break;
-     //     case 6:
-     //       bitmap.RotateFlip (RotateFlipType.Rotate90FlipNone);
-     //       break;
-     //     case 7:
-     //       bitmap.RotateFlip (RotateFlipType.Rotate270FlipX);
-     //       break;
-     //     case 8:
-     //       bitmap.RotateFlip (RotateFlipType.Rotate270FlipNone);
-     //       break;
-     //   }
-     //   // This EXIF data is now invalid and should be removed.
-     //   bitmap.RemovePropertyItem (274);
-     // }
-      return bitmap;
+      var metadataDirectories = ImageMetadataReader.ReadMetadata(fileStream);
+      fileStream.Seek(0, SeekOrigin.Begin);
+
+      var exifDirectory = metadataDirectories.OfType<ExifDirectoryBase>().Where(_ => !(_ is ExifThumbnailDirectory)).FirstOrDefault();
+
+      if (exifDirectory != null && exifDirectory.TryGetInt16(ExifDirectoryBase.TagOrientation, out var orientation))
+      {
+        var imageOrientation = (ImageOrientation)(orientation - 1);
+
+        if (Enum.IsDefined(typeof(ImageOrientation), imageOrientation))
+          return imageOrientation;
+      }
+
+      return ImageOrientation.None;
     }
 
-    public void UnloadCache ()
+    private static SKBitmap CorrectRotation(SKBitmap bitmap, ImageOrientation imageOrientation)
     {
-      SetNewLoadingID ();
+      if (imageOrientation == ImageOrientation.None)
+        return bitmap;
+
+      bitmap.Dispose();
+
+      SKBitmap corrected = null;
+
+      switch (imageOrientation)
+      {
+        case ImageOrientation.FlipHorizontal:
+        case ImageOrientation.RotateBy180Degrees:
+        case ImageOrientation.FlipVertical:
+          corrected = new SKBitmap(bitmap.Width, bitmap.Height);
+          break;
+        case ImageOrientation.RotateBy90DegreesAndFlipVertical:
+        case ImageOrientation.RotateBy90Degrees:
+        case ImageOrientation.RotateBy270DegreesAndFlipVertical:
+        case ImageOrientation.RotateBy270Degrees:
+          corrected = new SKBitmap(bitmap.Height, bitmap.Width);
+          break;
+      }
+
+      using var canvas = new SKCanvas(corrected);
+
+      switch (imageOrientation)
+      {
+        case ImageOrientation.FlipHorizontal:
+          canvas.Translate(corrected.Width, 0);
+          canvas.Scale(-1, 1);
+          break;
+        case ImageOrientation.RotateBy180Degrees:
+          canvas.Translate(corrected.Width, corrected.Height);
+          canvas.RotateDegrees(180);
+          break;
+        case ImageOrientation.FlipVertical:
+          canvas.Translate(0, corrected.Height);
+          canvas.Scale(1, -1);
+          break;
+        case ImageOrientation.RotateBy90Degrees:
+          canvas.Translate(corrected.Width, 0);
+          canvas.RotateDegrees(90);
+          break;
+        case ImageOrientation.RotateBy270Degrees:
+          canvas.Translate(0, corrected.Height);
+          canvas.RotateDegrees(270);
+          break;
+
+        case ImageOrientation.RotateBy90DegreesAndFlipVertical:
+          canvas.Translate(corrected.Width, 0);
+          canvas.RotateDegrees(90);
+          canvas.Translate(0, corrected.Height);
+          canvas.Scale(1, -1);
+          break;
+        case ImageOrientation.RotateBy270DegreesAndFlipVertical:
+          canvas.Translate(0, corrected.Height);
+          canvas.RotateDegrees(270);
+          canvas.Translate(0, corrected.Height);
+          canvas.Scale(1, -1);
+          break;
+      }
+
+      canvas.DrawBitmap(bitmap, 0, 0);
+
+      return corrected;
+    }
+
+    public void UnloadCache()
+    {
+      SetNewLoadingID();
 
       lock (_cacheMutex)
       {
         foreach (var cacheEntry in _cache.Values)
-          cacheEntry.Dispose ();
+          cacheEntry.Dispose();
 
-        _cache.Clear ();
+        _cache.Clear();
       }
     }
 
-    public void SortByDate ()
+    public void SortByDate()
     {
       if (Sorted == SortedBy.Date)
         return;
 
       Sorted = SortedBy.Date;
 
-      LoadFilesInFolder ();
-      AssureEnoughFilesAreCached (CurrentFileName, 2, 3);
+      LoadFilesInFolder();
+      AssureEnoughFilesAreCached(CurrentFileName, 2, 3);
     }
 
-    public void SortAlphabetically ()
+    public void SortAlphabetically()
     {
       if (Sorted == SortedBy.Alphabetically)
         return;
 
       Sorted = SortedBy.Alphabetically;
 
-      LoadFilesInFolder ();
-      AssureEnoughFilesAreCached (CurrentFileName, 2, 3);
+      LoadFilesInFolder();
+      AssureEnoughFilesAreCached(CurrentFileName, 2, 3);
     }
 
-    public static DateTime GetDateTakenFromImage (string path)
+    public static DateTime GetDateTakenFromImage(string path)
     {
       var regex = new Regex(":");
 
-      using (var fileStream = new FileStream (path, FileMode.Open, FileAccess.Read))
-      
+      using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
+
       using (var image = new Eto.Drawing.Bitmap(fileStream))
       {
         var propertyItem = image.Properties.Get<string>(36867);
-        var dateTaken = regex.Replace (propertyItem, "-", 2);
-        return DateTime.Parse (dateTaken);
+        var dateTaken = regex.Replace(propertyItem, "-", 2);
+
+        Console.WriteLine($"GetDateTakenFromImage: {path} -> {dateTaken}");
+
+        return DateTime.Parse(dateTaken);
       }
     }
   }

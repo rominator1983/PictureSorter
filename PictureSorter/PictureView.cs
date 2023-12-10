@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using Eto.Drawing;
 using Eto.Forms;
-using Gdk;
 using SkiaSharp;
 
 namespace PictureSorter
@@ -11,7 +9,7 @@ namespace PictureSorter
   {
     public IKeyInputHandler KeyInputHandler { get; private set; }
     public IPictureViewController PictureViewController { get; private set; }
-    public SkiaSharp.SKBitmap CurrentBitmap { get; private set; }
+    public SKBitmap CurrentBitmap { get; private set; }
     public double CurrentZoomFactor { get; private set; }
     public float CurrentPositionX { get; private set; }
     public float CurrentPositionY { get; private set; }
@@ -30,22 +28,19 @@ namespace PictureSorter
       PictureViewController.SetPictureForm(this);
 
       MouseWheel += OnMouseWheel;
-      //CurrentPicture.Paint += CurrentPictureOnPaint;
     }
 
     public void SetCurrentPicture(Picture picture)
     {
       Title = "Picture Sorter - " + picture.FileName;
-      //CurrentPicture.Image = picture.Bitmap;
       CurrentBitmap = picture.Bitmap;
-      //CurrentPicture.Image = picture.Bitmap;
+      Update();
     }
 
     private void Update()
     {
-      Console.WriteLine("Update");
+      //Console.WriteLine("Update");
       CurrentPicture.Invalidate();
-      //DrawImage(CurrentZoomFactor,  CurrentPicture.Canvas);
     }
 
     public void ToggleFullScreen()
@@ -81,18 +76,9 @@ namespace PictureSorter
         KeyInputHandler.Handle(new KeyEventArgs(Keys.Right, KeyEventType.KeyDown));
     }
 
-    private void PictureForm_KeyUp(object sender, KeyEventArgs e)
-    {
-      // Console.WriteLine("PictureForm_KeyUp: "+ e.KeyData);
-
-      // if (e.KeyData == Keys.Left || e.KeyData == Keys.Right || e.KeyData == Keys.Up || e.KeyData == Keys.Down)
-      //   KeyInputHandler.Handle(e);
-    }
-
     private void CurrentPictureOnPaint(SKSurface sKSurface)
     {
       DrawImage(CurrentZoomFactor, sKSurface.Canvas);
-      //Update();
     }
 
     public void ResetZoomAndPosition()
@@ -113,8 +99,6 @@ namespace PictureSorter
 
     private void DrawImage(double zoomFactor, SKCanvas graphics)
     {
-      Console.WriteLine("DrawImage: " + zoomFactor);
-
       graphics.Clear(new SKColor(0, 0, 0));
 
       var image = CurrentBitmap;
@@ -191,40 +175,6 @@ namespace PictureSorter
     private void PictureView_HelpButtonClicked(object sender, CancelEventArgs e)
     {
       PictureViewController.ShowHelpScreen();
-    }
-
-    protected override void OnDragDrop(DragEventArgs drgevent)
-    {
-      // IMPROVE: implement dragging into form. Currently, the form is not accepting any files.
-      //var data = (string[])drgevent.Data.GetData (DataFormats.FileDrop);
-      //
-      //if (data.Length > 0)
-      //{
-      //  var droppedFile = data[0];
-      //
-      //  if (File.Exists (droppedFile))
-      //    PictureViewController.SetDroppedFile (droppedFile);
-      //}
-
-      base.OnDragDrop(drgevent);
-    }
-
-    protected override void OnDragEnter(DragEventArgs drgevent)
-    {
-      // IMPROVE: implement dragging into form. Currently, the form is not accepting any files.
-      //if (drgevent.Data.GetDataPresent (DataFormats.FileDrop))
-      //  drgevent.Effect = DragDropEffects.Move;
-      //
-      base.OnDragEnter(drgevent);
-    }
-
-    protected override void OnDragOver(DragEventArgs drgevent)
-    {
-      // IMPROVE: implement dragging into form. Currently, the form is not accepting any files.
-      //if (drgevent.Data.GetDataPresent (DataFormats.FileDrop))
-      //  drgevent.Effect = DragDropEffects.Move;
-
-      base.OnDragOver(drgevent);
     }
 
     private void PictureView_MouseDoubleClick(object sender, MouseEventArgs e)

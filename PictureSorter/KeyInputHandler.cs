@@ -14,8 +14,9 @@ namespace PictureSorter
 
     public void Handle (KeyEventArgs e)
     {
-      Console.WriteLine($"e.KeyData: {e.KeyData}");
+      //Console.WriteLine($"e.KeyData: {e.KeyData}");
 
+      // TODO: implement
       //if (e.KeyData == Keys.Delete)
       //  PictureViewController.MoveToTrashBin (handle);
 
