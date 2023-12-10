@@ -99,7 +99,7 @@ namespace PictureSorter
 
     private void DrawImage(double zoomFactor, SKCanvas graphics)
     {
-      graphics.Clear(new SKColor(0, 0, 0));
+      graphics.Clear(new SKColor(40, 40, 40));
 
       var image = CurrentBitmap;
 
@@ -116,7 +116,7 @@ namespace PictureSorter
 
       if (grfxFactor > imageFactor)
       {
-        // use height for scaling
+        // graphics is more wide than image. use height for scaling
         var scale = image.Height / graphics.LocalClipBounds.Height;
 
         width = image.Width / scale * zoomFactor;
@@ -127,7 +127,7 @@ namespace PictureSorter
       }
       else
       {
-        // use width for scaling
+        // graphics is more high than image. use width for scaling
         var scale = image.Width / graphics.LocalClipBounds.Width;
 
         width = graphics.LocalClipBounds.Width * zoomFactor;
@@ -149,7 +149,7 @@ namespace PictureSorter
       while (x < 0 && x + width <= graphics.LocalClipBounds.Width)
         x++;
 
-      graphics.DrawBitmap(CurrentBitmap, new SKRect((float)x, (float)y, (float)width, (float)height));
+      graphics.DrawBitmap(CurrentBitmap, new SKRect((float)x, (float)y, (float)x + (float)width, (float)y + (float)height));
     }
 
     private void CurrentPicture_MouseDown(object sender, MouseEventArgs e)
@@ -189,9 +189,9 @@ namespace PictureSorter
 
     private void OnMouseWheel(object sender, MouseEventArgs mouseEventArgs)
     {
-      if (mouseEventArgs.Delta.Height > 0)
+      if (mouseEventArgs.Delta.Height > 1)
         PictureViewController.ZoomIn();
-      else
+      else if (mouseEventArgs.Delta.Height < -1)
         PictureViewController.ZoomOut();
     }
   }

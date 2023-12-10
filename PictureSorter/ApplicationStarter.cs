@@ -21,6 +21,7 @@ namespace PictureSorter
             var fileCache = new PictureCache();
             var pictureFormController = //new LoggingPictureViewController(
                 new PictureViewController(fileCache);
+
             var keyInputHandler = new KeyInputHandler(pictureFormController);
 
             fileCache.Initialize(args[0]);
