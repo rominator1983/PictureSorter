@@ -58,11 +58,6 @@ namespace PictureSorter
 
     public const int MAX_PATH = 260;
 
-
-    // TODO: noooooo
-    [DllImport("Shell32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
-    public static extern long SHGetSpecialFolderLocation(IntPtr hwndOwner, long nFolder, ITEMIDLIST pidl);
-
     public IPictureView PictureView { get; private set; }
     public IPictureCache PictureCache { get; private set; }
     public string BestOfFolder { get; private set; }

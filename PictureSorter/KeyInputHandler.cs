@@ -16,7 +16,7 @@ namespace PictureSorter
     {
       //Console.WriteLine($"e.KeyData: {e.KeyData}");
 
-      // TODO: implement
+      // TODO: implement recycle bin feature
       //if (e.KeyData == Keys.Delete)
       //  PictureViewController.MoveToTrashBin (handle);
 
