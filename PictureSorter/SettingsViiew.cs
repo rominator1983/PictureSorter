@@ -4,57 +4,59 @@ using Eto.Forms;
 
 namespace PictureSorter
 {
-  public partial class SettingsViiew : Form
+  public partial class SettingsView : Dialog
   {
     public string BestOfFolder { get; set; }
 
-    public SettingsViiew ()
+    public SettingsView()
     {
-      InitializeComponent ();
+      InitializeComponent();
 
       MinimumSize = Size;
     }
 
-    protected override void OnLoad (EventArgs e)
+    protected override void OnLoad(EventArgs e)
     {
-      base.OnLoad (e);
+      base.OnLoad(e);
 
       var suggestedBestOf = BestOfFolder + "/Best Of";
 
-      if (Directory.Exists (suggestedBestOf))
+      if (Directory.Exists(suggestedBestOf))
         BestOfFolder = suggestedBestOf;
 
       BestOfFolderText.Text = BestOfFolder;
     }
 
-    private void ApplyButton_Click (object sender, EventArgs e)
+    private void ApplyButton_Click(object sender, EventArgs e)
     {
       BestOfFolder = BestOfFolderText.Text;
-      
-      if (!Directory.Exists (BestOfFolder))
-        MessageBox.Show ("Folder must exist.");
+
+      if (!Directory.Exists(BestOfFolder))
+        MessageBox.Show("Folder must exist.");
       else
-        Close ();
+        Close();
     }
 
-    private void ChooseFolderButton_Click (object sender, EventArgs e)
+    private void ChooseFolderButton_Click(object sender, EventArgs e)
     {
-      var folderDialog = new SelectFolderDialog() /* { ShowNewFolderButton = true } */;
-      folderDialog.Directory = BestOfFolderText.Text;
+      var folderDialog = new SelectFolderDialog /* { ShowNewFolderButton = true } */
+      {
+        Directory = BestOfFolderText.Text
+      };
 
-      if (folderDialog.ShowDialog (this) != DialogResult.Ok)
+      if (folderDialog.ShowDialog(this) != DialogResult.Ok)
         return;
 
-      if (Directory.Exists (folderDialog.Directory))
+      if (Directory.Exists(folderDialog.Directory))
         BestOfFolderText.Text = folderDialog.Directory;
       else
-        MessageBox.Show ("Folder must exist.");
+        MessageBox.Show("Folder must exist.");
     }
 
-    private void CancelButton_Click (object sender, EventArgs e)
+    private void CancelButton_Click(object sender, EventArgs e)
     {
       BestOfFolder = null;
-      Close ();
+      Close();
     }
   }
 }

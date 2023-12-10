@@ -67,7 +67,7 @@ namespace PictureSorter
     }
 
     // NOTE: fix for GTK not forwarding key down events for arrow keys
-    private void PictureForm_KeyPress(object sender, Gtk.KeyReleaseEventArgs e)
+    private void PictureForm_GtkKeyPress(object sender, Gtk.KeyReleaseEventArgs e)
     {
       if (e.Event.Key == Gdk.Key.Left)
         KeyInputHandler.Handle(new KeyEventArgs(Keys.Left, KeyEventType.KeyDown));

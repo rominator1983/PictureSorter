@@ -3,7 +3,7 @@ using Eto.Forms;
 
 namespace PictureSorter
 {
-  public partial class HelpView : Form
+  public partial class HelpView : Dialog
   {
     public HelpView ()
     {
