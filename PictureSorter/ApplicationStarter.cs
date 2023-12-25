@@ -16,7 +16,6 @@ namespace PictureSorter
             if (args.Length == 0)
             {
                 MessageBox.Show("PictureSorter must be called with arguments.");
-                MessageBox.Show(ConfigurationManager.AppSettings["EditProgram"]);
                 return;
             }
 

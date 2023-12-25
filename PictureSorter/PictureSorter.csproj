@@ -7,6 +7,7 @@
     <Title>PictureSorter</Title>
     <AssemblyVersion>1.1.0</AssemblyVersion>
     <Product>PictureSorter</Product>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
   <ItemGroup>
   </ItemGroup>
