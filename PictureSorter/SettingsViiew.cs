@@ -22,7 +22,19 @@ namespace PictureSorter
       var suggestedBestOf = BestOfFolder + "/Best Of";
 
       if (Directory.Exists(suggestedBestOf))
+      {
         BestOfFolder = suggestedBestOf;
+      }
+      else
+      {
+        var result = MessageBox.Show("Best of folder must exist. Create?", MessageBoxButtons.YesNo);
+
+        if (result == DialogResult.Yes)
+        {
+          Directory.CreateDirectory(suggestedBestOf);
+          BestOfFolder = suggestedBestOf;
+        }
+      }
 
       BestOfFolderText.Text = BestOfFolder;
     }
@@ -32,14 +44,22 @@ namespace PictureSorter
       BestOfFolder = BestOfFolderText.Text;
 
       if (!Directory.Exists(BestOfFolder))
-        MessageBox.Show("Folder must exist.");
+      {
+        var result = MessageBox.Show("Best of folder must exist. Create?", MessageBoxButtons.YesNo);
+
+        if (result == DialogResult.Yes)
+        {
+          Directory.CreateDirectory(BestOfFolder);
+          Close();
+        }
+      }
       else
         Close();
     }
 
     private void ChooseFolderButton_Click(object sender, EventArgs e)
     {
-      var folderDialog = new SelectFolderDialog /* { ShowNewFolderButton = true } */
+      var folderDialog = new SelectFolderDialog
       {
         Directory = BestOfFolderText.Text
       };
@@ -50,7 +70,15 @@ namespace PictureSorter
       if (Directory.Exists(folderDialog.Directory))
         BestOfFolderText.Text = folderDialog.Directory;
       else
-        MessageBox.Show("Folder must exist.");
+      {
+        var result = MessageBox.Show("Best of folder must exist. Create?", MessageBoxButtons.YesNo);
+
+        if (result == DialogResult.Yes)
+        {
+          Directory.CreateDirectory(BestOfFolder);
+          Close();
+        }
+      }
     }
 
     private void CancelButton_Click(object sender, EventArgs e)

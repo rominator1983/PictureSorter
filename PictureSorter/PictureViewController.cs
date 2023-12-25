@@ -2,7 +2,6 @@
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using Eto.Forms;
 
 namespace PictureSorter
