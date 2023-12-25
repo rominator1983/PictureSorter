@@ -239,15 +239,13 @@ namespace PictureSorter
 
     public void MoveToTrashBin()
     {
-      MessageBox.Show("Not implemented yet.");
+      var homeFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+      MessageBox.Show(homeFolder);
+      var fileName = Path.GetFileName(PictureCache.CurrentFileName);
+      File.Move(PictureCache.CurrentFileName, $"{homeFolder}/.local/share/Trash/files/{fileName}", true);
 
-      // TODO: test/implement
-      return;
-
-      // File.Move(PictureCache.CurrentFileName, "~/.local/share/Trash/files");
-
-      // PictureCache.RefreshAfterFileManipulation();
-      // SetCurrentPicture();
+      PictureCache.RefreshAfterFileManipulation();
+      SetCurrentPicture();
     }
   }
 }
