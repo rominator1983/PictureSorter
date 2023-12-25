@@ -19,7 +19,7 @@ namespace PictureSorter
     {
       base.OnLoad(e);
 
-      var suggestedBestOf = BestOfFolder + "/Best Of";
+      var suggestedBestOf = BestOfFolder + "/01_Best Of";
 
       if (Directory.Exists(suggestedBestOf))
       {
@@ -27,7 +27,7 @@ namespace PictureSorter
       }
       else
       {
-        var result = MessageBox.Show("Best of folder must exist. Create?", MessageBoxButtons.YesNo);
+        var result = MessageBox.Show("Best of folder must exist. Create default folder?", MessageBoxButtons.YesNo);
 
         if (result == DialogResult.Yes)
         {
@@ -45,7 +45,7 @@ namespace PictureSorter
 
       if (!Directory.Exists(BestOfFolder))
       {
-        var result = MessageBox.Show("Best of folder must exist. Create?", MessageBoxButtons.YesNo);
+        var result = MessageBox.Show("Best of folder must exist. Create default folder?", MessageBoxButtons.YesNo);
 
         if (result == DialogResult.Yes)
         {
@@ -71,7 +71,7 @@ namespace PictureSorter
         BestOfFolderText.Text = folderDialog.Directory;
       else
       {
-        var result = MessageBox.Show("Best of folder must exist. Create?", MessageBoxButtons.YesNo);
+        var result = MessageBox.Show("Best of folder must exist. Create default folder?", MessageBoxButtons.YesNo);
 
         if (result == DialogResult.Yes)
         {
