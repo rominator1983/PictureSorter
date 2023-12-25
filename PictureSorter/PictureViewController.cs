@@ -92,7 +92,6 @@ namespace PictureSorter
 
     public void SetBestOfFolder()
     {
-      PictureView.SetNonFullScreen();
       var settingsView = new SettingsView { BestOfFolder = PictureCache.DirectoryName };
 
       settingsView.ShowModal();
