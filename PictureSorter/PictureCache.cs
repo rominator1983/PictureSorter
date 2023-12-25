@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using SkiaSharp;
 using MetadataExtractor.Formats.Exif;
 using MetadataExtractor;
+using Directory = System.IO.Directory;
 
 namespace PictureSorter
 {
@@ -40,6 +41,10 @@ namespace PictureSorter
     public void Initialize(string fileName)
     {
       fileName = Path.GetFullPath(fileName);
+
+      if (Directory.Exists(fileName))
+        fileName = Directory.GetFiles(fileName).FirstOrDefault();
+
       SetCurrent(fileName);
 
       DirectoryName = Path.GetDirectoryName(fileName);
@@ -250,7 +255,7 @@ namespace PictureSorter
       try
       {
         Console.WriteLine("CreateBitmap: " + fileName);
-        using (var fileStream = new FileStream(fileName, FileMode.Open))
+        using (var fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           var imageOrientation = GetOrientation(fileStream);
           return CorrectRotation(SKBitmap.Decode(fileStream), imageOrientation);
