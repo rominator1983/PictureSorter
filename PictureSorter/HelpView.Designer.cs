@@ -28,6 +28,7 @@
     /// </summary>
     private void InitializeComponent ()
     {
+      // TODO: Add license NOTICES
     // System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HelpView));
     // this.hotKeyLabel = new Eto.Forms.Label();
     // this.descriptionLabel = new Eto.Forms.Label();

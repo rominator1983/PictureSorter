@@ -1,4 +1,5 @@
-﻿using Eto.Forms;
+﻿using System.Configuration;
+using Eto.Forms;
 
 namespace PictureSorter
 {
@@ -10,16 +11,19 @@ namespace PictureSorter
 
         public void Start(string[] args)
         {
-            Application application = new Application();
+            var application = new Application();
 
             if (args.Length == 0)
             {
-                MessageBox.Show("Picture Viewer must be called with arguments.");
+                MessageBox.Show("PictureSorter must be called with arguments.");
+                MessageBox.Show(ConfigurationManager.AppSettings["EditProgram"]);
                 return;
             }
 
             var fileCache = new PictureCache();
-            var pictureFormController = //new LoggingPictureViewController(
+            var pictureFormController = 
+                // NOTE: for trouble shooting/logging
+                //new LoggingPictureViewController(
                 new PictureViewController(fileCache);
 
             var keyInputHandler = new KeyInputHandler(pictureFormController);

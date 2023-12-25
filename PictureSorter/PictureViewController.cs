@@ -130,47 +130,45 @@ namespace PictureSorter
 
     public void RotateRight()
     {
-      Rotate("r");
+      Rotate("-rotate 90");
       PictureCache.RefreshAfterFileManipulation();
       SetCurrentPicture();
     }
 
     public void RotateLeft()
     {
-      Rotate("l");
+      Rotate("-rotate 270");
       PictureCache.RefreshAfterFileManipulation();
       SetCurrentPicture();
     }
 
     private void Rotate(string rotateParameter)
     {
-      // Use DLL ?"C:\PROGRA~1\JPEGLO~1\contmenu.dll"
-
-      var jpegRotatorExe = GetJpegLoslessRotateExePath();
-
-      if (!File.Exists(jpegRotatorExe))
+      try
       {
-        MessageBox.Show(string.Format("Jpeg Lossless rotator not found at '{0}'. Check configuration file.", jpegRotatorExe));
-        return;
+        var jpegRotatorExe = GetJpegTranPath();
+
+        var process = new Process();
+        process.StartInfo.UseShellExecute = false;
+        process.StartInfo.FileName = jpegRotatorExe;
+        process.StartInfo.CreateNoWindow = true;
+
+        process.StartInfo.Arguments = string.Format("{0} -outfile \"{1}\" \"{1}\"", rotateParameter, PictureCache.CurrentFileName);
+
+        process.Start();
+        process.WaitForExit();
+        if (process.ExitCode != 0)
+          throw new Exception($"Error rotating picture with jpegtran. Exit code: {process.ExitCode}");
+
       }
-
-      var process = new Process();
-      process.StartInfo.UseShellExecute = false;
-      process.StartInfo.FileName = jpegRotatorExe;
-      process.StartInfo.CreateNoWindow = true;
-
-      process.StartInfo.Arguments = string.Format("-{0} \"{1}\"", rotateParameter, PictureCache.CurrentFileName);
-
-      process.Start();
-      process.WaitForExit();
+      catch (System.Exception exception)
+      {
+        MessageBox.Show("Error rotating picture. Probably jpegtran not installed. Install with:\r\nsudo apt install libjpeg-turbo-progs\r\n\r\nException:\r\n\r\n" + exception.Message);
+      }
     }
 
-    private string GetJpegLoslessRotateExePath()
-    {
-      // TODO: get path somehow
-      return "";
-      //return ConfigurationManager.AppSettings["JpegLoslessRotate"];
-    }
+    private string GetJpegTranPath() =>
+    ConfigurationManager.AppSettings["JpegLoslessRotate"];
 
     public void ZoomIn()
     {
@@ -210,10 +208,7 @@ namespace PictureSorter
 
     public void Edit()
     {
-      // TODO: get path somehow
-
-      //var editProgramm = ConfigurationManager.AppSettings["EditProgram"];
-      var editProgramm = "";
+      var editProgramm = ConfigurationManager.AppSettings["EditProgram"];
 
       var process = new Process();
       process.StartInfo.UseShellExecute = false;

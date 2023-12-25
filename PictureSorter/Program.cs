@@ -11,9 +11,6 @@ namespace PictureSorter
     [STAThread]
     static void Main (string[] args)
     {
-      //Application.EnableVisualStyles ();
-      //Application.SetCompatibleTextRenderingDefault (false);
-
       new ApplicationStarter ().Start (args);
     }
   }

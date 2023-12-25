@@ -7,19 +7,19 @@ namespace PictureSorter
 {
   partial class PictureView
   {
-    private MySKControl CurrentPicture;
+    private SKControl CurrentPicture;
 
     private void InitializeComponent()
     {
-      Eto.Platform.Instance.Add<MySKControl.ISKControl>(() =>
+      Eto.Platform.Instance.Add<SKControl.ISKControl>(() =>
       {
-        return new MySKControlHandler { BackgroundColor = Eto.Drawing.Colors.Red };
+        return new SKControlHandler { BackgroundColor = Eto.Drawing.Colors.Red };
       });
 
       // 
       // CurrentPicture
       // 
-      this.CurrentPicture = new MySKControl();
+      this.CurrentPicture = new SKControl();
       this.CurrentPicture.Cursor = Eto.Forms.Cursors.Pointer;
       this.CurrentPicture.Size = new Eto.Drawing.Size(396, 255);
       this.CurrentPicture.TabIndex = 1;
