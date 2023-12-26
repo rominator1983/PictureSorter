@@ -40,6 +40,6 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         prerelease: false
-        title: "Release Build ${{ env.CURRENT_VERSION }}"
+        title: "1.1"
         files: |
-          ./PictureSorter/PictureSorter/bin/Release/net8.0/linux-x64/publish/PictureSorter
+          /home/runner/work/PictureSorter/PictureSorter/PictureSorter/bin/Release/net8.0/linux-x64/publish/PictureSorter
