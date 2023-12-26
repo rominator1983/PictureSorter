@@ -14,7 +14,32 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 8.0.100
+        dotnet-version: 8.0.x
     - name: Publish with dotnet
       run: dotnet publish --configuration Release /p:PublishProfile=standard
       
+deployRelease:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Publish
+      run: dotnet publish --configuration Release /p:PublishProfile=standard
+    - name: GithubReleasesPush
+      uses: marvinpinto/action-automatic-releases@v1.2.1
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: ${{ env.CURRENT_VERSION }}
+        prerelease: false
+        title: "Release Build ${{ env.CURRENT_VERSION }}"
+        files: |
+          ./PictureSorter/PictureSorter/bin/Release/net8.0/linux-x64/publish/PictureSorter
