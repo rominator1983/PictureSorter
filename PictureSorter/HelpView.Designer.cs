@@ -31,7 +31,6 @@
       PixelLayout = new Eto.Forms.PixelLayout();
 
       // TODO: Add license NOTICES
-      // TODO: Add DELETE key to help
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HelpView));
       this.hotKeyLabel = new Eto.Forms.Label();
       this.descriptionLabel = new Eto.Forms.Label();

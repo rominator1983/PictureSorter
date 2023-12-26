@@ -132,6 +132,8 @@ namespace PictureSorter
 
     private void SetCurrent(string fileName)
     {
+      Console.WriteLine("SetCurrent: " + fileName);
+
       var bitmap = GetCachedBitmap(fileName, SetNewLoadingID());
 
       if (bitmap == null)
@@ -208,6 +210,8 @@ namespace PictureSorter
       task2.Start();
       task3.Start();
       task4.Start();
+
+      Task.WaitAll(task1, task2, task3, task4);
     }
 
     private int GetIndexOf(string[] directoryContent, string currentFileName)
@@ -217,6 +221,8 @@ namespace PictureSorter
 
     private SKBitmap GetCachedBitmap(string fileName, Guid loadingID)
     {
+      Console.WriteLine("GetCachedBitmap: " + fileName + " " + loadingID);
+
       if (_loadingID != loadingID)
         return null;
 
@@ -258,6 +264,9 @@ namespace PictureSorter
         using (var fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           var imageOrientation = GetOrientation(fileStream);
+          Console.WriteLine("Orientation: " + imageOrientation);
+
+          fileStream.Seek(0, SeekOrigin.Begin);
           return CorrectRotation(SKBitmap.Decode(fileStream), imageOrientation);
         }
       }
@@ -290,8 +299,6 @@ namespace PictureSorter
     {
       if (imageOrientation == ImageOrientation.None)
         return bitmap;
-
-      bitmap.Dispose();
 
       SKBitmap corrected = null;
 
@@ -350,6 +357,8 @@ namespace PictureSorter
       }
 
       canvas.DrawBitmap(bitmap, 0, 0);
+
+      bitmap.Dispose();
 
       return corrected;
     }
