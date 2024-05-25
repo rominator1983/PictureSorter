@@ -159,9 +159,9 @@ namespace PictureSorter
           throw new Exception($"Error rotating picture with jpegtran. Exit code: {process.ExitCode}");
 
       }
-      catch (System.Exception exception)
+      catch (Exception exception)
       {
-        MessageBox.Show("Error rotating picture. Probably jpegtran not installed. Install with:\r\nsudo apt install libjpeg-turbo-progs\r\n\r\nException:\r\n\r\n" + exception.Message);
+        MessageBox.Show("Error rotating picture. Probably jpegtran not installed.\r\nInstall with:\r\nsudo apt install libjpeg-turbo-progs\r\n\r\nException:\r\n\r\n" + exception.Message);
       }
     }
 
@@ -238,7 +238,6 @@ namespace PictureSorter
     public void MoveToTrashBin()
     {
       var homeFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-      MessageBox.Show(homeFolder);
       var fileName = Path.GetFileName(PictureCache.CurrentFileName);
       File.Move(PictureCache.CurrentFileName, $"{homeFolder}/.local/share/Trash/files/{fileName}", true);
 

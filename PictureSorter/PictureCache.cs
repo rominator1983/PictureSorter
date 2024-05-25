@@ -10,6 +10,7 @@ using SkiaSharp;
 using MetadataExtractor.Formats.Exif;
 using MetadataExtractor;
 using Directory = System.IO.Directory;
+using Eto.Forms;
 
 namespace PictureSorter
 {
@@ -272,7 +273,8 @@ namespace PictureSorter
       }
       catch (Exception ex)
       {
-        Console.WriteLine($"Error reading image file: {fileName}\r\n{ex}");
+        MessageBox.Show($"Error reading image file: {fileName}\r\n\r\n{ex}");
+
         return null;
       }
     }
